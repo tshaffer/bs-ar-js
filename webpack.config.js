@@ -9,6 +9,7 @@ module.exports = {
     filename: 'bundle.js',
     path: __dirname + '/build'
   },
+  mode: 'development',
 
   target: 'electron-renderer',
 
@@ -17,7 +18,7 @@ module.exports = {
     extensions: ['.ts', '.tsx', '.js', '.json']
   },
 
-  // devtool: 'source-map',
+  devtool: 'inline-source-map',
 
   externals: {
     BSDeviceInfo: 'BSDeviceInfo',
@@ -41,12 +42,6 @@ module.exports = {
       {
         test: /\.tsx?$/,
         loader: 'ts-loader'
-      },
-
-      {
-        enforce: 'pre',
-        test: /\.js$/,
-        loader: 'source-map-loader'
       }
     ],
   },

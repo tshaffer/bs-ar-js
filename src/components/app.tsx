@@ -1,21 +1,48 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Button } from '@material-ui/core';
 
-export default class App extends React.Component<any, any> {
+import { makePizza } from '../controller';
 
-  constructor(props: any) {
-    super(props);
-  }
+import { AppModelState } from '../type';
 
-  componentDidMount() {
-    console.log('eat more pizza');
-  }
+// -----------------------------------------------------------------------
+// Types
+// -----------------------------------------------------------------------
 
-  render() {
-
-    return (
-      <div>
-        pizza
-      </div>
-    );
-  }
+/** @internal */
+/** @private */
+export interface AppProps {
+  onMakePizza: () => any;
 }
+
+
+// -----------------------------------------------------------------------
+// Component
+// -----------------------------------------------------------------------
+
+const App = (props: AppProps) => {
+
+  React.useEffect(props.onMakePizza, []);
+
+  return <Button color="primary">Hello World</Button>;
+
+  // return (
+  //   <div>pizza</div>
+  // );
+
+};
+
+function mapStateToProps(state: AppModelState, ownProps: any): Partial<AppProps> {
+  return {
+  };
+}
+
+const mapDispatchToProps = (dispatch: any) => {
+  return bindActionCreators({
+    onMakePizza: makePizza,
+  }, dispatch);
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
