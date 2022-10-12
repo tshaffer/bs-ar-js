@@ -13,7 +13,7 @@ const getHostConfig = (): Promise<string> => {
     })
 };
 
-const loadPresentationData = (): Promise<any> => {
+export const loadPresentationData = (): Promise<any> => {
 
   let runtimeEnvironment = 'Dev';
 
