@@ -1,7 +1,7 @@
 {
-  "name": "spotify-3",
+  "name": "bs-ar-js",
   "version": "0.0.1",
-  "description": "Spotify using electron",
+  "description": "BrightSign Autorun",
   "main": "main.js",
   "scripts": {
     "build": "node node_modules/webpack/bin/webpack --config ./webpack.config.js",
