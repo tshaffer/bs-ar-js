@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Node on BrightSign</title>
+    <title>BrightSign Autorun</title>
     <link rel="stylesheet" href="./css/app.css">
 </head>
 <body>
 <div id="content"></div>
 </body>
+<script>
+  global = globalThis //<- this should be enough
+</script>
 <script src="./build/bundle.js"></script>
 </html>

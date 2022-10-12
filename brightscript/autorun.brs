@@ -7,11 +7,6 @@ Sub RunApp()
 
   EnableZoneSupport(true)
 
-  vm = CreateObject("roVideoMode")
-  ' vm.SetMode("3840x2160x30p:fullres")
-  ' vm.SetMode("3840x2160x60p:fullres")
-  vm.SetMode("1920x1080x60p")
-
   app = {}
 
   app.msgPort = CreateObject("roMessagePort")
@@ -20,7 +15,6 @@ Sub RunApp()
   app.processHtmlWidgetEvent = processHtmlWidgetEvent
 
   app.htmlRect = CreateObject("roRectangle", 0, 0, 1920, 1080)
-  ' app.htmlRect = CreateObject("roRectangle", 0, 0, 3849, 2160)
   is = {
       port: 2999
   }
