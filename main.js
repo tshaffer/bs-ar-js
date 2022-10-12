@@ -1,4 +1,4 @@
-console.log('hello nodeOnBsPlayground');
+console.log('Autorun.js');
 const electron = require('electron');
 // const { session } = require('electron');
 
