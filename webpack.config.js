@@ -63,6 +63,14 @@ module.exports = {
       resource.request = resource.request.replace(/^@brightsign\/videomodeconfiguration$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/videomodeconfiguration');
       resource.request = resource.request.replace(/^@brightsign\/videooutput$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/videooutput');
     }),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('development'),
+    }),
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify('production')
+      }
+    })
   ].filter(Boolean),
 
   node: {}, // possibly / probably unnecessary
@@ -94,14 +102,14 @@ module.exports = {
       }
     ],
   },
-  plugins: [
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('development'),
-    }),
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify('production')
-      }
-    })
-  ]
+  // plugins: [
+  //   new webpack.DefinePlugin({
+  //     'process.env.NODE_ENV': JSON.stringify('development'),
+  //   }),
+  //   new webpack.DefinePlugin({
+  //     'process.env': {
+  //       NODE_ENV: JSON.stringify('production')
+  //     }
+  //   })
+  // ]
 };

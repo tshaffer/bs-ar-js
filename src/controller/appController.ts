@@ -1,6 +1,4 @@
-// TEDTODO - hack to work on Mac.
-// import HostConfig from '@brightsign/hostconfiguration';
-import HostConfig from '../mock/hostconfiguration';
+import HostConfig from '@brightsign/hostconfiguration';
 
 const getHostConfig = (): Promise<string> => {
   const hc = new HostConfig();
@@ -21,6 +19,7 @@ export const loadPresentationData = (): Promise<any> => {
 
   return getHostConfig()
     .then((hostName: string) => {
+      console.log('loadPresentationData: hostName = ' + hostName);
       if (hostName !== 'myplayer') {
         runtimeEnvironment = 'BrightSign';
       }
