@@ -1,23 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 var webpack = require('webpack');
 
-// const exportPlugins = (obj, mappings) => {
-// 	for (const name of Object.keys(mappings)) {
-// 		Object.defineProperty(obj, name, {
-// 			configurable: false,
-// 			enumerable: true,
-// 			get: mappings[name]
-// 		});
-// 	}
-// };
-
-// var normalModuleReplacementPlugin = require("./NormalModuleReplacementPlugin");
-// exports = module.exports = webpack;
-// exportPlugins(exports, {
-// 	NormalModuleReplacementPlugin: () =>
-// 		require("./NormalModuleReplacementPlugin")
-// });
-    
 module.exports = {
   entry: './src/index.tsx',
   output: {
@@ -38,6 +21,8 @@ module.exports = {
   devtool: 'inline-source-map',
 
   // TEDTODO - plugins, node, externals
+  
+  // MAC version: plugins, node?, externals
   plugins: [
     new webpack.NormalModuleReplacementPlugin(/^@brightsign.*$/, (resource) => {
       resource.request = resource.request.replace(/^@brightsign\/assetpool$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/assetpool');
@@ -77,6 +62,7 @@ module.exports = {
 
   externals: {},
 
+  // MAC version: plugins, node?, externals
   // externals: {
   //   BSDeviceInfo: 'BSDeviceInfo',
   //   '@brightsign/registry': 'commonjs @brightsign/registry',
@@ -102,14 +88,4 @@ module.exports = {
       }
     ],
   },
-  // plugins: [
-  //   new webpack.DefinePlugin({
-  //     'process.env.NODE_ENV': JSON.stringify('development'),
-  //   }),
-  //   new webpack.DefinePlugin({
-  //     'process.env': {
-  //       NODE_ENV: JSON.stringify('production')
-  //     }
-  //   })
-  // ]
 };
