@@ -19,10 +19,11 @@ export const loadPresentationData = (): Promise<any> => {
 
   return getHostConfig()
     .then((hostName: string) => {
+      console.log('loadPresentationData: hostName = ' + hostName);
       if (hostName !== 'myplayer') {
         runtimeEnvironment = 'BrightSign';
       }
       return Promise.resolve(runtimeEnvironment);
     });
-  }
+}
 
