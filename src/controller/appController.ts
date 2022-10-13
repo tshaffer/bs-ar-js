@@ -1,4 +1,6 @@
-import HostConfig from '@brightsign/hostconfiguration';
+// TEDTODO - hack to work on Mac.
+// import HostConfig from '@brightsign/hostconfiguration';
+import HostConfig from '../mock/hostconfiguration';
 
 const getHostConfig = (): Promise<string> => {
   const hc = new HostConfig();
@@ -24,5 +26,5 @@ export const loadPresentationData = (): Promise<any> => {
       }
       return Promise.resolve(runtimeEnvironment);
     });
-  }
+}
 

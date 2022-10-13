@@ -1,6 +1,23 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 var webpack = require('webpack');
 
+// const exportPlugins = (obj, mappings) => {
+// 	for (const name of Object.keys(mappings)) {
+// 		Object.defineProperty(obj, name, {
+// 			configurable: false,
+// 			enumerable: true,
+// 			get: mappings[name]
+// 		});
+// 	}
+// };
+
+// var normalModuleReplacementPlugin = require("./NormalModuleReplacementPlugin");
+// exports = module.exports = webpack;
+// exportPlugins(exports, {
+// 	NormalModuleReplacementPlugin: () =>
+// 		require("./NormalModuleReplacementPlugin")
+// });
+    
 module.exports = {
   entry: './src/index.tsx',
   output: {
@@ -20,22 +37,54 @@ module.exports = {
 
   devtool: 'inline-source-map',
 
-  externals: {
-    BSDeviceInfo: 'BSDeviceInfo',
-    '@brightsign/registry': 'commonjs @brightsign/registry',
-    '@brightsign/systemtime': 'commonjs @brightsign/systemtime',
-    '@brightsign/networkconfiguration': 'commonjs @brightsign/networkconfiguration',
-    '@brightsign/videooutput': 'commonjs @brightsign/videooutput',
-    '@brightsign/screenshot': 'commonjs @brightsign/screenshot',
+  // TEDTODO - plugins, node, externals
+  plugins: [
+    new webpack.NormalModuleReplacementPlugin(/^@brightsign.*$/, (resource) => {
+      resource.request = resource.request.replace(/^@brightsign\/assetpool$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/assetpool');
+      resource.request = resource.request.replace(/^@brightsign\/assetpoolfetcher$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/assetpoolfetcher');
+      resource.request = resource.request.replace(/^@brightsign\/assetrealizer$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/assetrealizer');
+      resource.request = resource.request.replace(/^@brightsign\/compositor$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/compositor');
+      resource.request = resource.request.replace(/^@brightsign\/decoderconfiguration$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/decoderconfiguration');
+      resource.request = resource.request.replace(/^@brightsign\/dwsconfiguration$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/dwsconfiguration');
+      resource.request = resource.request.replace(/^@brightsign\/filesysteminfo$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/filesysteminfo');
+      resource.request = resource.request.replace(/^@brightsign\/hostconfiguration$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/hostconfiguration');
+      resource.request = resource.request.replace(/^@brightsign\/keyboard$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/keyboard');
+      resource.request = resource.request.replace(/^@brightsign\/keystore$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/keystore');
+      resource.request = resource.request.replace(/^@brightsign\/networkconfiguration$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/networkconfiguration');
+      resource.request = resource.request.replace(/^@brightsign\/networkdiagnostics$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/networkdiagnostics');
+      resource.request = resource.request.replace(/^@brightsign\/pointer$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/pointer');
+      resource.request = resource.request.replace(/^@brightsign\/pointercalibration$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/pointercalibration');
+      resource.request = resource.request.replace(/^@brightsign\/registry$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/registry');
+      resource.request = resource.request.replace(/^@brightsign\/screenshot$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/screenshot');
+      resource.request = resource.request.replace(/^@brightsign\/storageinfo$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/storageinfo');
+      resource.request = resource.request.replace(/^@brightsign\/system$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/system');
+      resource.request = resource.request.replace(/^@brightsign\/systemtime$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/systemtime');
+      resource.request = resource.request.replace(/^@brightsign\/videoinput$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/videoinput');
+      resource.request = resource.request.replace(/^@brightsign\/videomodeconfiguration$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/videomodeconfiguration');
+      resource.request = resource.request.replace(/^@brightsign\/videooutput$/, '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock/videooutput');
+    }),
+  ].filter(Boolean),
 
-    '@brightsign/videomodeconfiguration': 'commonjs @brightsign/videomodeconfiguration',
-    '@brightsign/videoinput': 'commonjs @brightsign/videoinput',
-    '@brightsign/system': 'commonjs @brightsign/system',
+  node: {}, // possibly / probably unnecessary
 
-    '@brightsign/hostconfiguration': 'commonjs @brightsign/hostconfiguration',
-    '@brightsign/networkdiagnostics': 'commonjs @brightsign/networkdiagnostics',
-    'core-js/fn/object/assign': 'commonjs core-js/fn/object/assign',
-  },
+  externals: {},
+
+  // externals: {
+  //   BSDeviceInfo: 'BSDeviceInfo',
+  //   '@brightsign/registry': 'commonjs @brightsign/registry',
+  //   '@brightsign/systemtime': 'commonjs @brightsign/systemtime',
+  //   '@brightsign/networkconfiguration': 'commonjs @brightsign/networkconfiguration',
+  //   '@brightsign/videooutput': 'commonjs @brightsign/videooutput',
+  //   '@brightsign/screenshot': 'commonjs @brightsign/screenshot',
+
+  //   '@brightsign/videomodeconfiguration': 'commonjs @brightsign/videomodeconfiguration',
+  //   '@brightsign/videoinput': 'commonjs @brightsign/videoinput',
+  //   '@brightsign/system': 'commonjs @brightsign/system',
+
+  //   '@brightsign/hostconfiguration': 'commonjs @brightsign/hostconfiguration',
+  //   '@brightsign/networkdiagnostics': 'commonjs @brightsign/networkdiagnostics',
+  //   'core-js/fn/object/assign': 'commonjs core-js/fn/object/assign',
+  // },
 
   module: {
     rules: [
