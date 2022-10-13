@@ -40,14 +40,14 @@ export type AutorunModelThunkAction<T> = (
 
 export interface AutorunBaseAction extends Action {
   type: string;
-  payload: {} | null;
+  payload: {} | null | any; // TEDTODO - any is bogus, but required for AutorunAction definition
   error?: boolean;
   meta?: {};
 }
 
-// export interface AutorunAction<T> extends AutorunBaseAction {
-//   payload: T;
-// }
+export interface AutorunAction<T> extends AutorunBaseAction {
+  payload: T;
+}
 
 // export type AutorunDispatch = Dispatch<AutorunState>;
 export type AutorunDispatch = Dispatch<any>;
