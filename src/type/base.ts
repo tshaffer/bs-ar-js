@@ -24,7 +24,6 @@ export interface AutorunPlayerState {
   hsmState: HsmState;
   presentationData: PresentationDataState;
   playback: PlaybackState;
-  // arDataFeeds: ArDataFeedMap;
 }
 
 /** @internal */
@@ -51,7 +50,7 @@ export interface Dimensions {
 }
 
 export const autorunStateFromState = (state: any): AutorunState => {
-  if (state.hasOwnProperty('autorun')) {
+  if (Object.prototype.hasOwnProperty.call(state, 'autorun')) {
     const autorunPlayerState: AutorunPlayerState = (state as any).bsPlayer;
     const autorunState: AutorunState = {
       bsdm: state.bsdm,
@@ -60,35 +59,13 @@ export const autorunStateFromState = (state: any): AutorunState => {
         playback: autorunPlayerState.playback,
         presentationData: autorunPlayerState.presentationData,
         hsmState: autorunPlayerState.hsmState,
-        // arDataFeeds: autorunModelState.arDataFeeds,
       }
     };
     return autorunState;
-  } else if (state.hasOwnProperty('bsPlayer')) {
+  } else if (Object.prototype.hasOwnProperty.call(state, 'bsPlayer')) {
     return state;
   } else {
     debugger;
     return state;
   }
 };
-
-/** @internal */
-/** @private */
-export interface AppModelState {
-  pizzaName: PizzaName;
-  pizzaToppings: PizzaTopping[];
-}
-
-/** @internal */
-/** @private */
-export interface PizzaName {
-  type: string;
-}
-
-/** @internal */
-/** @private */
-export interface PizzaTopping {
-  label: string;
-  meat: boolean;
-}
-

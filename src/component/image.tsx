@@ -33,9 +33,6 @@ export class ImageComponent extends React.Component<ImageProps> {
 
     const src: string = isomorphicPath.join('file://', this.props.filePath);
 
-    console.log('ImageComponent#render: ');
-    console.log(src);
-
     const dimensions = sizeOf(this.props.filePath);
     if (isNil(dimensions)) {
       return null;

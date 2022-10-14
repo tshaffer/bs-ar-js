@@ -1,8 +1,5 @@
 import {
   HStateSpecification,
-  // HStateType,
-  // MediaHState,
-  // MediaHStateParamsData,
   MediaHStateData
 } from '../../type';
 import { addHState } from '../../model';
@@ -37,27 +34,3 @@ export const createHStateSpecification = (
   };
   return hStateSpecification;
 };
-
-// export const createStateDataForStateType = (
-//   stateType: HStateType,
-//   mediaHState: MediaHState,
-// ): MediaHStateParamsData | null => {
-//   switch (stateType) {
-//     case HStateType.Mrss: {
-//       const mediaStateData: MediaHStateParamsData = {
-//         dataFeedId: mediaHState.data.mediaStateData!.dataFeedId as string,
-//         currentFeedId: null,
-//         pendingFeedId: null,
-//         displayIndex: 0,
-//         firstItemDisplayed: false,
-//         waitForContentTimer: null,
-//       };
-//       return mediaStateData;
-//     }
-//     default: {
-//       break;
-//     }
-//   }
-
-//   return null;
-// };

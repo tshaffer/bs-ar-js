@@ -8,12 +8,9 @@ import {
   ZoneHsmProperties,
   autorunStateFromState,
   MediaHState,
-  MrssStateData,
 } from '../type';
 import { find, isNil, isString } from 'lodash';
 import { HsmMap } from '../type';
-import { dmGetMediaStateById, dmFilterDmState, DmDerivedContentItem } from '@brightsign/bsdatamodel';
-import { ContentItemType } from '@brightsign/bscore';
 
 // ------------------------------------
 // Selectors
@@ -72,7 +69,7 @@ export function getHStateByName(state: any, name: string | null): HState | null 
   const hStateMap: HStateMap = autorunState.bsPlayer.hsmState.hStateById;
 
   const hStateId = find(Object.keys(hStateMap), (id) => {
-    if (hStateMap.hasOwnProperty(id)) {
+    if (Object.prototype.hasOwnProperty.call(hStateMap, id)) {
       const hState = hStateMap[id];
       return (hState.name === name);
     }
@@ -112,7 +109,7 @@ export function getZoneHsmList(state: any): Hsm[] {
   const hsmList: Hsm[] = [];
   const hsmById: HsmMap = autorunState.bsPlayer.hsmState.hsmById;
   for (const hsmId in hsmById) {
-    if (hsmById.hasOwnProperty(hsmId)) {
+    if (Object.prototype.hasOwnProperty.call(hsmById, hsmId)) {
       const hsm: Hsm = hsmById[hsmId];
       if (hsm.type === 'VideoOrImages') {
         hsmList.push(hsm);
@@ -151,28 +148,6 @@ export function getActiveMediaStateId(state: any, zoneId: string): string {
   return '';
 }
 
-export function getActiveMrssDisplayIndex(state: any, zoneId: string): number {
-  // TEDTODO - the following is called here and in getActiveMediaStateId - fix this
-  const zoneHsm: Hsm | null = getZoneHsmFromZoneId(state, zoneId);
-  if (!isNil(zoneHsm)) {
-    const mediaStateId = getActiveMediaStateId(state, zoneId);
-    const mediaState = dmGetMediaStateById(dmFilterDmState(state), { id: mediaStateId });
-    if (!isNil(mediaState)) {
-      const contentItem: DmDerivedContentItem = mediaState.contentItem;
-      if (contentItem.type === ContentItemType.MrssFeed) {
-        const mrssState = getHStateByMediaStateId(state, zoneHsm.id, mediaStateId) as MediaHState;
-        if (!isNil(mrssState)) {
-          const mrssStateData: MrssStateData = mrssState.data.mediaStateData! as MrssStateData;
-          const displayIndex: number = mrssStateData.displayIndex;
-          return displayIndex;
-        }
-      }
-    }
-  }
-
-  return -1;
-}
-
 export function getEvents(state: any): HsmEventType[] {
   const autorunState: AutorunState = autorunStateFromState(state);
   return autorunState.bsPlayer.hsmState.hsmEventQueue;
@@ -182,17 +157,13 @@ export const getIsHsmInitialized = (state: any): boolean => {
   const autorunState: AutorunState = autorunStateFromState(state);
   const hsmMap: HsmMap = getHsmMap(autorunState);
   for (const hsmId in hsmMap) {
-    if (hsmMap.hasOwnProperty(hsmId)) {
+    if (Object.prototype.hasOwnProperty.call(hsmMap, hsmId)) {
       const hsm: Hsm = hsmMap[hsmId];
       if (!hsm.initialized) {
         return false;
       }
     }
   }
-
-  // TEDTODO - need to check if the hsm's associated with zones exist yet
-  // console.log('number of hsms:');
-  // console.log(Object.keys(hsmMap).length);
 
   return true;
 };

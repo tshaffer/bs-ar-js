@@ -36,7 +36,6 @@ export const createHsm = (
   properties: HsmProperties,
 ): AutorunStringThunkAction => {
   return ((dispatch: AutorunDispatch) => {
-    // console.log('***** HSM.ts#createHsm');
     const hsmId: string = newAutorunId();
     dispatch(addHsm({
       id: hsmId,
@@ -57,11 +56,6 @@ export function initializeHsm(
 
   return ((dispatch: AutorunDispatch, getState: () => AutorunState) => {
 
-    // console.log('***** HSM.ts#initializeHsm');
-
-    // is there a reason why the following call is necessary? It causes breakage....
-    // dispatch(setActiveHState(hsmId, null));
-
     // execute initial transition
     const action = hsmInitialPseudoStateHandler(hsmId) as any;
     if (!isNil(action)) {
@@ -71,7 +65,6 @@ export function initializeHsm(
           dispatch(completeHsmInitialization(hsmId));
           // const hsmInitializationComplete = getHsmInitialized(autorunStateFromState(getState()), hsmId);
           getHsmInitialized(autorunStateFromState(getState()), hsmId);
-          // console.log('69 - end of hsmInitialize-0, hsmInitializationComplete: ' + hsmInitializationComplete);
           return Promise.resolve();
         });
     }
@@ -107,7 +100,6 @@ function completeHsmInitialization(
     // if there is no activeState, the playlist is empty
     if (isNil(activeState)) {
       dispatch(setActiveHState(hsmId, null));
-      // console.log('***** return from HSM.ts#completeHsmInitialization');
       dispatch(setHsmInitialized(hsmId, true));
       return;
     }
@@ -121,6 +113,7 @@ function completeHsmInitialization(
       }
       let sourceState = topState;
 
+      // eslint-disable-next-line no-constant-condition
       while (true) {
 
         const entryStates: any[] = [];
@@ -162,7 +155,6 @@ function completeHsmInitialization(
         if (status !== 'TRANSITION') {
           activeState = sourceState;
           dispatch(setActiveHState(hsmId, activeState));
-          // console.log('***** return from HSM.ts#completeHsmInitialization');
           dispatch(setHsmInitialized(hsmId, true));
           return;
         }
@@ -191,9 +183,6 @@ export function hsmDispatch(
   return ((dispatch: AutorunDispatch, getState: () => AutorunState) => {
 
     let activeState = getHStateById(autorunStateFromState(getState()), activeStateId);
-
-    // console.log('***** HSM.ts#Dispatch');
-    // console.log(event.EventType);
 
     // if there is no activeState, the playlist is empty
     if (isNil(activeState)) {
@@ -359,8 +348,6 @@ export function hsmDispatch(
       // stick the target into register */
       t = (path as HState[])[0];
       activeState = t;                                                   // update the current state */
-
-      // console.log('HSM.ts#Dispatch: invoke handler with initEvent');
 
       // drill into the target hierarchy...
       action = HStateEventHandler((t as HState), initEvent, stateData);

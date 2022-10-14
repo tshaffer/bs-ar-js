@@ -3,8 +3,6 @@ import { PlaybackState } from '../type';
 
 export const SET_VIDEO_ELEMENT_REF = 'SET_VIDEO_ELEMENT_REF';
 
-// TEDTODO - why doesn't the following work?
-// export type SetPlaybackAction = AutorunAction<Partial<PlaybackState>>;
 export type SetPlaybackAction = AutorunAction<PlaybackState>;
 
 export const setVideoElementRef = (
@@ -31,6 +29,7 @@ export const playbackReducer = (
 ): PlaybackState => {
   switch (type) {
     case SET_VIDEO_ELEMENT_REF:
+      // eslint-disable-next-line no-case-declarations
       const newState: PlaybackState = {
         videoElementRef: payload.videoElementRef
       };
@@ -39,8 +38,3 @@ export const playbackReducer = (
       return state;
   }
 };
-
-// const isValidPlaybackState = (state: any): boolean => {
-//   // TEDTODO
-//   return true;
-// };

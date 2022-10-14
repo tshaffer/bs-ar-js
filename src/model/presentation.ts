@@ -3,7 +3,6 @@ import {
 } from './baseAction';
 import {
   PresentationDataState,
-  //  ScheduledPresentation,
   AutorunSchedule,
   SyncSpecFileMap,
   RuntimeEnvironment,
@@ -48,8 +47,6 @@ export const updateRuntimeEnvironment = (
 export const updatePresentationSrcDirectory = (
   srcDirectory: string,
 ): UpdatePresentationDataAction => {
-  console.log('updatePresentationSrcDirectory');
-  console.log(srcDirectory);
   return {
     type: UPDATE_PRESENTATION_SRC_DIRECTORY,
     payload: {

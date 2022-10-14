@@ -1,6 +1,9 @@
-import { isNil } from 'lodash';
+/* eslint-disable @typescript-eslint/no-var-requires */
+import { isNil, isString } from 'lodash';
 import isomorphicPath from 'isomorphic-path';
 import * as fs from 'fs-extra';
+
+import * as process from 'process';
 
 import HostConfig from '@brightsign/hostconfiguration';
 
@@ -9,6 +12,7 @@ import {
   RawSyncSpec,
   AutorunSchedule,
   SyncSpecFileMap,
+  Dimensions,
 } from '../type';
 import {
   AutorunDispatch,
@@ -46,14 +50,13 @@ export const initPresentation = (): AutorunVoidThunkAction => {
 const getHostConfig = (): Promise<string> => {
   const hc = new HostConfig();
   return hc.getConfig()
-    .then((config) => {
-      console.log('config.hostName');
+    .then((config: any) => {
       return Promise.resolve(config['hostName']);
     }).catch((e: any) => {
       console.log('hostConfig.getConfig error: ');
       console.log(e);
       return Promise.resolve('myplayer');
-    })
+    });
 };
 
 const loadPresentationData = (): AutorunVoidPromiseThunkAction => {
@@ -73,14 +76,11 @@ const loadPresentationData = (): AutorunVoidPromiseThunkAction => {
             return dispatch(setAutoschedule());
           });
       });
-    });
+  });
 };
 
 const setSrcDirectory = (): AutorunVoidThunkAction => {
   return ((dispatch: AutorunDispatch, getState: () => AutorunState) => {
-
-    const process = require('process');
-
     const autorunState: AutorunState = autorunStateFromState(getState());
     const runtimeEnvironment: RuntimeEnvironment = getRuntimeEnvironment(autorunState);
     let srcDirectory = '';
@@ -88,12 +88,18 @@ const setSrcDirectory = (): AutorunVoidThunkAction => {
       if (runtimeEnvironment === RuntimeEnvironment.Dev) {
         require('dotenv').config();
 
-        dispatch(updateScreenDimensions({
-          width: process.env.SCREEN_WIDTH,
-          height: process.env.SCREEN_HEIGHT,
-        }));
-
-        srcDirectory = process.env.SOURCE_DIRECTORY;
+        let screenDimensions: Dimensions = {
+          width: 1920,
+          height: 1080,
+        };
+        if (isString(process.env.SCREEN_WIDTH) && isString(process.env.SCREEN_HEIGHT)) {
+          screenDimensions = {
+            width: parseInt(process.env.SCREEN_WIDTH, 10),
+            height: parseInt(process.env.SCREEN_HEIGHT, 10),
+          };
+        }
+        dispatch(updateScreenDimensions({ width: screenDimensions.width, height: screenDimensions.height }));
+        srcDirectory = process.env.SOURCE_DIRECTORY as string;
       } else if (runtimeEnvironment === RuntimeEnvironment.BaconPreview) {
         srcDirectory = '/Users/tedshaffer/Desktop/autotron-2020';
       } else {
@@ -133,7 +139,7 @@ const setAutoschedule = (): AutorunVoidPromiseThunkAction => {
       getSyncSpecFile(autorunState, 'autoschedule.json')
         .then((autoSchedule: AutorunSchedule) => {
           dispatch(updatePresentationAutoschedule(autoSchedule));
-          return resolve(null);
+          return resolve();
         });
     });
   });
@@ -202,86 +208,34 @@ function readSyncSpec(syncSpecFilePath: string): Promise<RawSyncSpec> {
     });
 }
 
-const openSignDev = (presentationName: string) => {
-
-  return ((dispatch: AutorunDispatch, getState: () => AutorunState) => {
-
-    const autoSchedule: AutorunSchedule | null = getAutoschedule(autorunStateFromState(getState()));
-    if (!isNil(autoSchedule)) {
-      //  - only a single scheduled item is currently supported
-      const scheduledPresentation = autoSchedule!.scheduledPresentations[0];
-      const presentationToSchedule = scheduledPresentation.presentationToSchedule;
-      presentationName = presentationToSchedule.name;
-      const autoplayFileName = presentationName + '.bml';
-
-      const syncSpecFileMap = getSyncSpecFileMap(autorunStateFromState(getState()));
-      if (!isNil(syncSpecFileMap)) {
-        return getSyncSpecReferencedFile(
-          autoplayFileName,
-          syncSpecFileMap!,
-          getSrcDirectory(autorunStateFromState(getState())))
-          .then((bpfxState: any) => {
-            const autoPlay: any = bpfxState.bsdm;
-            const signState = autoPlay as DmSignState;
-            dispatch(dmOpenSign(signState));
-          });
-      }
-      return Promise.resolve();
-    } else {
-      return Promise.resolve();
-    }
-  });
-};
-
-const openSignBrightSign = (presentationName: string) => {
-  return ((dispatch: AutorunDispatch, getState: () => AutorunState) => {
-
-    const autoSchedule: AutorunSchedule | null = getAutoschedule(autorunStateFromState(getState()));
-    if (!isNil(autoSchedule)) {
-
-      //  - only a single scheduled item is currently supported
-      const scheduledPresentation = autoSchedule!.scheduledPresentations[0];
-      const presentationToSchedule = scheduledPresentation.presentationToSchedule;
-      presentationName = presentationToSchedule.name;
-      const autoplayFileName = presentationName + '.bml';
-
-      const syncSpecFileMap = getSyncSpecFileMap(autorunStateFromState(getState()));
-      if (!isNil(syncSpecFileMap)) {
-        return getSyncSpecReferencedFile(
-          autoplayFileName,
-          syncSpecFileMap!,
-          getSrcDirectory(autorunStateFromState(getState())))
-          .then((bpfxState: any) => {
-            const autoPlay: any = bpfxState.bsdm;
-            const signState = autoPlay as DmSignState;
-            dispatch(dmOpenSign(signState));
-          });
-      }
-      return Promise.resolve();
-    } else {
-      return Promise.resolve();
-    }
-  });
-};
-
 export const openSign = (presentationName: string) => {
 
   return ((dispatch: AutorunDispatch, getState: () => AutorunState) => {
 
-    const runtimeEnvironment: RuntimeEnvironment = getRuntimeEnvironment(getState());
+    const autoSchedule: AutorunSchedule | null = getAutoschedule(autorunStateFromState(getState()));
+    if (!isNil(autoSchedule)) {
 
-    if (runtimeEnvironment === RuntimeEnvironment.BaconPreview) {
-      // const action = openSignBaconPreview(presentationName);
-      // const promise = dispatch(action as any);
-      // return promise;
-    } else if (runtimeEnvironment === RuntimeEnvironment.Dev) {
-      const action = openSignDev(presentationName);
-      const promise = dispatch(action as any);
-      return promise;
+      //  - only a single scheduled item is currently supported
+      const scheduledPresentation = autoSchedule!.scheduledPresentations[0];
+      const presentationToSchedule = scheduledPresentation.presentationToSchedule;
+      presentationName = presentationToSchedule.name;
+      const autoplayFileName = presentationName + '.bml';
+
+      const syncSpecFileMap = getSyncSpecFileMap(autorunStateFromState(getState()));
+      if (!isNil(syncSpecFileMap)) {
+        return getSyncSpecReferencedFile(
+          autoplayFileName,
+          syncSpecFileMap!,
+          getSrcDirectory(autorunStateFromState(getState())))
+          .then((bpfxState: any) => {
+            const autoPlay: any = bpfxState.bsdm;
+            const signState = autoPlay as DmSignState;
+            dispatch(dmOpenSign(signState));
+          });
+      }
+      return Promise.resolve();
     } else {
-      const action = openSignBrightSign(presentationName);
-      const promise = dispatch(action as any);
-      return promise;
+      return Promise.resolve();
     }
   });
 };

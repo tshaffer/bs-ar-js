@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import {
   AutorunState,
   HsmEventType,
@@ -18,16 +19,12 @@ import {
 import { initializeVideoOrImagesZoneHsm, videoOrImagesZoneHsmGetInitialState } from './mediaZoneHsm';
 import {
   getHsmById,
-  // getActiveHStateIdByHsmId
 } from '../../selector';
 import {
   AutorunDispatch, AutorunVoidThunkAction,
 } from '../../model';
 import { STVideoStateEventHandler } from './videoState';
 import { STImageStateEventHandler } from './imageState';
-// import { STSuperStateEventHandler } from './superState';
-// import { STMrssStateEventHandler } from './mrssState';
-// import { logHsmEvent } from '../../utility/logger';
 
 export const hsmConstructorFunction = (hsmId: string): AutorunVoidThunkAction => {
   return ((dispatch: AutorunDispatch, getState: () => AutorunState) => {
@@ -72,8 +69,6 @@ export const HStateEventHandler = (
 ): any => {
   return ((dispatch: AutorunDispatch, getState: () => AutorunState) => {
 
-    // const hsmStateBefore: HsmState = getState().bsPlayer.hsmState;
-
     let retVal: any = null;
 
     if (!isNil(hState)) {
@@ -96,31 +91,11 @@ export const HStateEventHandler = (
         case HStateType.Video:
           retVal = dispatch(STVideoStateEventHandler(hState, event, stateData));
           break;
-        // case HStateType.SuperState:
-        //   retVal = dispatch(STSuperStateEventHandler(hState, event, stateData));
-        //   break;
-        // case HStateType.Mrss:
-        //   retVal = dispatch(STMrssStateEventHandler(hState, event, stateData));
-        //   break;
         default:
           debugger;
           break;
       }
     }
-
-    // console.log('** HStateEventHandler');
-    // console.log(hState.type);
-    // console.log(event.EventType);
-    // console.log(event.EventData);
-    // console.log('bsPlayerState before:');
-    // console.log(hsmStateBefore);
-
-    // const hStateAfter: HState = getActiveHStateIdByHsmId(getState(), hState.hsmId) as HState;
-    // const hsmStateAfter: HsmState = getState().bsPlayer.hsmState;
-    // console.log('hsmState after:');
-    // console.log(hsmStateAfter);
-
-    // logHsmEvent(getState(), hState, hsmStateBefore, event, hStateAfter, hsmStateAfter);
 
     return retVal;
   });

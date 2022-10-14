@@ -64,26 +64,6 @@ class SignComponent extends React.Component<SignProps> {
     );
   }
 
-  renderTickerZone(zone: DmcZone): object {
-
-    return (
-      <div
-        key={zone.id}
-        style={{
-          position: 'absolute',
-          left: zone.absolutePosition.x,
-          top: zone.absolutePosition.y,
-          width: zone.absolutePosition.width,
-          height: zone.absolutePosition.height,
-        }}
-      >
-        <div>
-          Pizza
-        </div>
-      </div>
-    );
-  }
-
   renderZone(zoneId: string): object | null {
 
     const zone: DmcZone = dmGetZoneById(this.props.bsdm, { id: zoneId }) as DmcZone;
@@ -91,9 +71,6 @@ class SignComponent extends React.Component<SignProps> {
     switch (zone.type) {
       case 'VideoOrImages': {
         return this.renderMediaZone(zone);
-      }
-      case 'Ticker': {
-        return this.renderTickerZone(zone);
       }
       default: {
         debugger;

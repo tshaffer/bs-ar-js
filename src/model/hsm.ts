@@ -152,7 +152,6 @@ export function setMediaHStateTimeoutId(
   timeoutId: number,
 ): any {
   return {
-    // type: SET_MEDIA_H_STATE_TIMEOUT_ID,
     type: SET_MEDIA_H_STATE_PARAMETER_DATA,
     payload: {
       hStateId,
@@ -259,7 +258,6 @@ const hStateById = (
       return { ...state, [hStateId]: updatedHState };
     }
     case SET_MEDIA_H_STATE_PARAMETER_DATA: {
-      // console.log('SET_MEDIA_H_STATE_PARAMETER_DATA');
       const hStateId: string = (action.payload as any).hStateId;
       const hState: HState = state[hStateId];
       const mediaHState: MediaHState = hState as MediaHState;
