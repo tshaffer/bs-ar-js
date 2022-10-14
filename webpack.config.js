@@ -7,7 +7,17 @@ console.log('enter webpack');
 // TEDTODO - these should be environment variables, command line arguments
 var appBrightSignMock = '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock';
 var target = 'brightsign';
-// var target = 'dev';
+
+console.log('process.env.PLATFORM');
+console.log(process.env.PLATFORM);
+if (process.env.PLATFORM === 'electron') {
+  target = 'electron';
+}
+
+console.log('appBrightSignMock');
+console.log(appBrightSignMock);
+console.log('target');
+console.log(target);
 
 let plugins = [
   new webpack.DefinePlugin({
