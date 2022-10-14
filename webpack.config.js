@@ -1,11 +1,11 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 var webpack = require('webpack');
 
 // TEDTODO - these should be environment variables, command line arguments
 var appBrightSignMock = '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock';
-// var target = 'brightsign';
-var target = 'dev';
+var target = 'brightsign';
+// var target = 'dev';
 
 let plugins = [
   new webpack.DefinePlugin({

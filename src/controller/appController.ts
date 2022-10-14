@@ -46,7 +46,7 @@ export const initPresentation = (): AutorunVoidThunkAction => {
 const getHostConfig = (): Promise<string> => {
   const hc = new HostConfig();
   return hc.getConfig()
-    .then((config) => {
+    .then((config: any) => {
       console.log('config.hostName');
       return Promise.resolve(config['hostName']);
     }).catch((e: any) => {
@@ -73,7 +73,7 @@ const loadPresentationData = (): AutorunVoidPromiseThunkAction => {
             return dispatch(setAutoschedule());
           });
       });
-    });
+  });
 };
 
 const setSrcDirectory = (): AutorunVoidThunkAction => {
