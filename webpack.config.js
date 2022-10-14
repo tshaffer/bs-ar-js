@@ -2,6 +2,8 @@
 const path = require('path');
 var webpack = require('webpack');
 
+console.log('enter webpack');
+
 // TEDTODO - these should be environment variables, command line arguments
 var appBrightSignMock = '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock';
 var target = 'brightsign';
