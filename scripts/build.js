@@ -17,7 +17,7 @@ const chalk = require('chalk');
 const webpack = require('webpack');
 
 const env = require('../config/env');
-const isStandalone = env.isStandalone;
+const isBrightSign = env.isBrightSign;
 const config = require('../webpack.config');
 const paths = require('../config/paths');
 const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
@@ -25,22 +25,11 @@ const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const FileSizeReporter = require('react-dev-utils/FileSizeReporter');
 const printBuildError = require('react-dev-utils/printBuildError');
 
-let appProdIndexJs = paths.appProdIndexJs;
-if (isStandalone) {
-  appProdIndexJs = paths.appProdStandaloneIndexJs;
-}
-console.log('appProdIndexJs: ', appProdIndexJs);
-
 let distDeploymentDir = paths.appDistElectron;
-if (isStandalone) {
+if (isBrightSign) {
   distDeploymentDir = paths.appDistStandalone;
 }
 console.log('distDeploymentDir: ', distDeploymentDir);
-
-// Warn and crash if required files are missing
-// if (!checkRequiredFiles([paths.appHtml, appProdIndexJs])) {
-//   process.exit(1);
-// }
 
 return build(0);
 

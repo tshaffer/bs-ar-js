@@ -99,11 +99,11 @@ function getClientEnvironment(publicUrl) {
 }
 
 const isElectron = process.env.PLATFORM === 'electron';
-const isStandalone = process.env.PLATFORM === 'standalone' && !isElectron;
+const isBrightSign = process.env.PLATFORM === 'brightsign' && !isElectron;
 
 module.exports.getClientEnvironment = getClientEnvironment;
 module.exports.isElectron = isElectron;
-module.exports.isStandalone = isStandalone;
+module.exports.isBrightSign = isBrightSign;
 
 
 

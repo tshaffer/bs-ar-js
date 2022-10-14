@@ -7,7 +7,7 @@
     "build": "node node_modules/webpack/bin/webpack --config ./webpack.config.js",
     "buildW": "node node_modules/webpack/bin/webpack --config ./webpack.config.js --watch",
     "build-electron": "cross-env NODE_ENV=develop PLATFORM=electron node scripts/build.js",
-    "build-standalone": "cross-env NODE_ENV=develop PLATFORM=standalone node scripts/build.js"
+    "build-brightsign": "cross-env NODE_ENV=develop PLATFORM=brightsign node scripts/build.js"
   },
   "author": "Ted",
   "license": "ISC",
