@@ -13,6 +13,6 @@ const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 module.exports = {
   dotenv: resolveApp('.env'),
   appDistElectron: resolveApp('dist/electron'),
-  appDistStandalone: resolveApp('dist/standalone'),
+  appDistBrightSign: resolveApp('dist/brightsign'),
   appBrightSignMock: resolveApp('src/mock'),
 };

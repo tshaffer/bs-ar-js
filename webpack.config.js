@@ -62,13 +62,20 @@ if (target !== 'brightsign') {
   };
 }
 
+let distDeploymentDir = paths.appDistBrightSign;
+if (process.env.PLATFORM === 'electron') {
+  distDeploymentDir = paths.appDistElectron;
+}
+console.log('webpack.config.js, distDeploymentDir: ', distDeploymentDir);
+
 module.exports = {
   entry: './src/index.tsx',
   output: {
     libraryTarget: 'umd',
     publicPath: './build/',
     filename: 'bundle.js',
-    path: __dirname + '/build'
+    path: distDeploymentDir,
+    // path: __dirname + '/build'
   },
   mode: 'development',
 

@@ -25,7 +25,7 @@ const printBuildError = require('react-dev-utils/printBuildError');
 
 let distDeploymentDir = paths.appDistElectron;
 if (isBrightSign) {
-  distDeploymentDir = paths.appDistStandalone;
+  distDeploymentDir = paths.appDistBrightSign;
 }
 console.log('distDeploymentDir: ', distDeploymentDir);
 
