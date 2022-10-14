@@ -8,8 +8,6 @@ process.on('unhandledRejection', err => {
   throw err;
 });
 
-console.log('build.js entry');
-
 // Ensure environment variables are read.
 require('../config/env');
 
@@ -35,20 +33,13 @@ return build(0);
 
 // Create the production build and print the deployment instructions.
 function build(previousFileSizes) {
-  console.log('Creating an optimized production ' + (process.env.PLATFORM)  + ' build');
 
   let compiler = webpack(config);
   return new Promise((resolve, reject) => {
-    console.log('invoke compiler');
     compiler.run((err, stats) => {
       if (err) {
-        console.log('compiler.run() returned err');
         return reject(err);
       }
-
-      console.log('successful return from compiler.run()');
-      console.log('stats');
-      console.log(stats);
 
       const messages = formatWebpackMessages(stats.toJson({}, true));
       if (messages.errors.length) {

@@ -1,23 +1,13 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
+const paths = require('./config/paths');
+
 var webpack = require('webpack');
 
-console.log('enter webpack');
-
-// TEDTODO - these should be environment variables, command line arguments
-var appBrightSignMock = '/Users/tedshaffer/Documents/Projects/bs-ar-js/src/mock';
 var target = 'brightsign';
-
-console.log('process.env.PLATFORM');
-console.log(process.env.PLATFORM);
 if (process.env.PLATFORM === 'electron') {
   target = 'electron';
 }
-
-console.log('appBrightSignMock');
-console.log(appBrightSignMock);
-console.log('target');
-console.log(target);
 
 let plugins = [
   new webpack.DefinePlugin({
@@ -29,28 +19,28 @@ var externals = {};
 if (target !== 'brightsign') {
   plugins.push(
     new webpack.NormalModuleReplacementPlugin(/^@brightsign.*$/, (resource) => {
-      resource.request = resource.request.replace(/^@brightsign\/assetpool$/, path.resolve(appBrightSignMock, 'assetpool'));
-      resource.request = resource.request.replace(/^@brightsign\/assetpoolfetcher$/, path.resolve(appBrightSignMock, 'assetpoolfetcher'));
-      resource.request = resource.request.replace(/^@brightsign\/assetrealizer$/, path.resolve(appBrightSignMock, 'assetrealizer'));
-      resource.request = resource.request.replace(/^@brightsign\/compositor$/, path.resolve(appBrightSignMock, 'compositor'));
-      resource.request = resource.request.replace(/^@brightsign\/decoderconfiguration$/, path.resolve(appBrightSignMock, 'decoderconfiguration'));
-      resource.request = resource.request.replace(/^@brightsign\/dwsconfiguration$/, path.resolve(appBrightSignMock, 'dwsconfiguration'));
-      resource.request = resource.request.replace(/^@brightsign\/filesysteminfo$/, path.resolve(appBrightSignMock, 'filesysteminfo'));
-      resource.request = resource.request.replace(/^@brightsign\/hostconfiguration$/, path.resolve(appBrightSignMock, 'hostconfiguration'));
-      resource.request = resource.request.replace(/^@brightsign\/keyboard$/, path.resolve(appBrightSignMock, 'keyboard'));
-      resource.request = resource.request.replace(/^@brightsign\/keystore$/, path.resolve(appBrightSignMock, 'keystore'));
-      resource.request = resource.request.replace(/^@brightsign\/networkconfiguration$/, path.resolve(appBrightSignMock, 'networkconfiguration'));
-      resource.request = resource.request.replace(/^@brightsign\/networkdiagnostics$/, path.resolve(appBrightSignMock, 'networkdiagnostics'));
-      resource.request = resource.request.replace(/^@brightsign\/pointer$/, path.resolve(appBrightSignMock, 'pointer'));
-      resource.request = resource.request.replace(/^@brightsign\/pointercalibration$/, path.resolve(appBrightSignMock, 'pointercalibration'));
-      resource.request = resource.request.replace(/^@brightsign\/registry$/, path.resolve(appBrightSignMock, 'registry'));
-      resource.request = resource.request.replace(/^@brightsign\/screenshot$/, path.resolve(appBrightSignMock, 'screenshot'));
-      resource.request = resource.request.replace(/^@brightsign\/storageinfo$/, path.resolve(appBrightSignMock, 'storageinfo'));
-      resource.request = resource.request.replace(/^@brightsign\/system$/, path.resolve(appBrightSignMock, 'system'));
-      resource.request = resource.request.replace(/^@brightsign\/systemtime$/, path.resolve(appBrightSignMock, 'systemtime'));
-      resource.request = resource.request.replace(/^@brightsign\/videoinput$/, path.resolve(appBrightSignMock, 'videoinput'));
-      resource.request = resource.request.replace(/^@brightsign\/videomodeconfiguration$/, path.resolve(appBrightSignMock, 'videomodeconfiguration'));
-      resource.request = resource.request.replace(/^@brightsign\/videooutput$/, path.resolve(appBrightSignMock, 'videooutput'));
+      resource.request = resource.request.replace(/^@brightsign\/assetpool$/, path.resolve(paths.appBrightSignMock, 'assetpool'));
+      resource.request = resource.request.replace(/^@brightsign\/assetpoolfetcher$/, path.resolve(paths.appBrightSignMock, 'assetpoolfetcher'));
+      resource.request = resource.request.replace(/^@brightsign\/assetrealizer$/, path.resolve(paths.appBrightSignMock, 'assetrealizer'));
+      resource.request = resource.request.replace(/^@brightsign\/compositor$/, path.resolve(paths.appBrightSignMock, 'compositor'));
+      resource.request = resource.request.replace(/^@brightsign\/decoderconfiguration$/, path.resolve(paths.appBrightSignMock, 'decoderconfiguration'));
+      resource.request = resource.request.replace(/^@brightsign\/dwsconfiguration$/, path.resolve(paths.appBrightSignMock, 'dwsconfiguration'));
+      resource.request = resource.request.replace(/^@brightsign\/filesysteminfo$/, path.resolve(paths.appBrightSignMock, 'filesysteminfo'));
+      resource.request = resource.request.replace(/^@brightsign\/hostconfiguration$/, path.resolve(paths.appBrightSignMock, 'hostconfiguration'));
+      resource.request = resource.request.replace(/^@brightsign\/keyboard$/, path.resolve(paths.appBrightSignMock, 'keyboard'));
+      resource.request = resource.request.replace(/^@brightsign\/keystore$/, path.resolve(paths.appBrightSignMock, 'keystore'));
+      resource.request = resource.request.replace(/^@brightsign\/networkconfiguration$/, path.resolve(paths.appBrightSignMock, 'networkconfiguration'));
+      resource.request = resource.request.replace(/^@brightsign\/networkdiagnostics$/, path.resolve(paths.appBrightSignMock, 'networkdiagnostics'));
+      resource.request = resource.request.replace(/^@brightsign\/pointer$/, path.resolve(paths.appBrightSignMock, 'pointer'));
+      resource.request = resource.request.replace(/^@brightsign\/pointercalibration$/, path.resolve(paths.appBrightSignMock, 'pointercalibration'));
+      resource.request = resource.request.replace(/^@brightsign\/registry$/, path.resolve(paths.appBrightSignMock, 'registry'));
+      resource.request = resource.request.replace(/^@brightsign\/screenshot$/, path.resolve(paths.appBrightSignMock, 'screenshot'));
+      resource.request = resource.request.replace(/^@brightsign\/storageinfo$/, path.resolve(paths.appBrightSignMock, 'storageinfo'));
+      resource.request = resource.request.replace(/^@brightsign\/system$/, path.resolve(paths.appBrightSignMock, 'system'));
+      resource.request = resource.request.replace(/^@brightsign\/systemtime$/, path.resolve(paths.appBrightSignMock, 'systemtime'));
+      resource.request = resource.request.replace(/^@brightsign\/videoinput$/, path.resolve(paths.appBrightSignMock, 'videoinput'));
+      resource.request = resource.request.replace(/^@brightsign\/videomodeconfiguration$/, path.resolve(paths.appBrightSignMock, 'videomodeconfiguration'));
+      resource.request = resource.request.replace(/^@brightsign\/videooutput$/, path.resolve(paths.appBrightSignMock, 'videooutput'));
     })
   );
 } else {
