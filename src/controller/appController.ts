@@ -53,7 +53,7 @@ const getHostConfig = (): Promise<string> => {
       console.log('hostConfig.getConfig error: ');
       console.log(e);
       return Promise.resolve('myplayer');
-    })
+    });
 };
 
 const loadPresentationData = (): AutorunVoidPromiseThunkAction => {
