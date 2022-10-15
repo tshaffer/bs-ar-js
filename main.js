@@ -21,9 +21,19 @@ let win;
 function createWindow() {
   // Create the browser window.
   // win = new BrowserWindow({width: 1400, height: 800});
-  win = new BrowserWindow({ width: 1400, height: 1100 });
+  // win = new BrowserWindow({ width: 1400, height: 1100 });
 
   console.log('__dirname=', __dirname);
+
+  win = new BrowserWindow({
+    width: 1400,
+    height: 1100,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true,
+    },
+  });
 
   // and load the index.html of the app.
   win.loadURL(`file://${__dirname}/index.html`);
@@ -32,8 +42,8 @@ function createWindow() {
   //   console.log('redux extension id');
   //   console.log(id);
 
-    // Open the DevTools.
-    win.webContents.openDevTools();
+  // Open the DevTools.
+  win.webContents.openDevTools();
   // });
 
 
