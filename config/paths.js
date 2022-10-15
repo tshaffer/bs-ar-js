@@ -12,7 +12,8 @@ const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 // config after eject: we're in ./config/
 module.exports = {
   dotenv: resolveApp('.env'),
-  appDistElectron: resolveApp('dist/electron'),
-  appDistBrightSign: resolveApp('dist/brightsign'),
+  appDistElectron: resolveApp('build'),
+  appDistBrightSign: resolveApp('build/brightsign'),
   appBrightSignMock: resolveApp('src/mock'),
+  appDevElectronMain: resolveApp('main.js'),
 };
