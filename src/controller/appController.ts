@@ -203,86 +203,34 @@ function readSyncSpec(syncSpecFilePath: string): Promise<RawSyncSpec> {
     });
 }
 
-const openSignDev = (presentationName: string) => {
-
-  return ((dispatch: AutorunDispatch, getState: () => AutorunState) => {
-
-    const autoSchedule: AutorunSchedule | null = getAutoschedule(autorunStateFromState(getState()));
-    if (!isNil(autoSchedule)) {
-      //  - only a single scheduled item is currently supported
-      const scheduledPresentation = autoSchedule!.scheduledPresentations[0];
-      const presentationToSchedule = scheduledPresentation.presentationToSchedule;
-      presentationName = presentationToSchedule.name;
-      const autoplayFileName = presentationName + '.bml';
-
-      const syncSpecFileMap = getSyncSpecFileMap(autorunStateFromState(getState()));
-      if (!isNil(syncSpecFileMap)) {
-        return getSyncSpecReferencedFile(
-          autoplayFileName,
-          syncSpecFileMap!,
-          getSrcDirectory(autorunStateFromState(getState())))
-          .then((bpfxState: any) => {
-            const autoPlay: any = bpfxState.bsdm;
-            const signState = autoPlay as DmSignState;
-            dispatch(dmOpenSign(signState));
-          });
-      }
-      return Promise.resolve();
-    } else {
-      return Promise.resolve();
-    }
-  });
-};
-
-const openSignBrightSign = (presentationName: string) => {
-  return ((dispatch: AutorunDispatch, getState: () => AutorunState) => {
-
-    const autoSchedule: AutorunSchedule | null = getAutoschedule(autorunStateFromState(getState()));
-    if (!isNil(autoSchedule)) {
-
-      //  - only a single scheduled item is currently supported
-      const scheduledPresentation = autoSchedule!.scheduledPresentations[0];
-      const presentationToSchedule = scheduledPresentation.presentationToSchedule;
-      presentationName = presentationToSchedule.name;
-      const autoplayFileName = presentationName + '.bml';
-
-      const syncSpecFileMap = getSyncSpecFileMap(autorunStateFromState(getState()));
-      if (!isNil(syncSpecFileMap)) {
-        return getSyncSpecReferencedFile(
-          autoplayFileName,
-          syncSpecFileMap!,
-          getSrcDirectory(autorunStateFromState(getState())))
-          .then((bpfxState: any) => {
-            const autoPlay: any = bpfxState.bsdm;
-            const signState = autoPlay as DmSignState;
-            dispatch(dmOpenSign(signState));
-          });
-      }
-      return Promise.resolve();
-    } else {
-      return Promise.resolve();
-    }
-  });
-};
-
 export const openSign = (presentationName: string) => {
 
   return ((dispatch: AutorunDispatch, getState: () => AutorunState) => {
 
-    const runtimeEnvironment: RuntimeEnvironment = getRuntimeEnvironment(getState());
+    const autoSchedule: AutorunSchedule | null = getAutoschedule(autorunStateFromState(getState()));
+    if (!isNil(autoSchedule)) {
 
-    if (runtimeEnvironment === RuntimeEnvironment.BaconPreview) {
-      // const action = openSignBaconPreview(presentationName);
-      // const promise = dispatch(action as any);
-      // return promise;
-    } else if (runtimeEnvironment === RuntimeEnvironment.Dev) {
-      const action = openSignDev(presentationName);
-      const promise = dispatch(action as any);
-      return promise;
+      //  - only a single scheduled item is currently supported
+      const scheduledPresentation = autoSchedule!.scheduledPresentations[0];
+      const presentationToSchedule = scheduledPresentation.presentationToSchedule;
+      presentationName = presentationToSchedule.name;
+      const autoplayFileName = presentationName + '.bml';
+
+      const syncSpecFileMap = getSyncSpecFileMap(autorunStateFromState(getState()));
+      if (!isNil(syncSpecFileMap)) {
+        return getSyncSpecReferencedFile(
+          autoplayFileName,
+          syncSpecFileMap!,
+          getSrcDirectory(autorunStateFromState(getState())))
+          .then((bpfxState: any) => {
+            const autoPlay: any = bpfxState.bsdm;
+            const signState = autoPlay as DmSignState;
+            dispatch(dmOpenSign(signState));
+          });
+      }
+      return Promise.resolve();
     } else {
-      const action = openSignBrightSign(presentationName);
-      const promise = dispatch(action as any);
-      return promise;
+      return Promise.resolve();
     }
   });
 };
