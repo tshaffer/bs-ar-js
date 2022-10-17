@@ -72,7 +72,7 @@ export function getHStateByName(state: any, name: string | null): HState | null 
   const hStateMap: HStateMap = autorunState.bsPlayer.hsmState.hStateById;
 
   const hStateId = find(Object.keys(hStateMap), (id) => {
-    if (hStateMap.hasOwnProperty(id)) {
+    if (Object.prototype.hasOwnProperty.call(hStateMap, id)) {
       const hState = hStateMap[id];
       return (hState.name === name);
     }

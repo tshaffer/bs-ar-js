@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { isNil } from 'lodash';
 import isomorphicPath from 'isomorphic-path';
 import * as fs from 'fs-extra';

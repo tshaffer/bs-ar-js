@@ -85,7 +85,7 @@ function getPoolAssetFiles(state: AutorunState): FileLUT {
 
   if (!isNil(syncSpecFileMap) && isString(rootDirectory)) {
     for (const fileName in syncSpecFileMap) {
-      if (syncSpecFileMap.hasOwnProperty(fileName)) {
+      if (Object.prototype.hasOwnProperty.call((syncSpecFileMap), fileName)) {
         const syncSpecDownload: SyncSpecDownload = syncSpecFileMap[fileName];
         poolAssetFiles[fileName] = isomorphicPath.join(rootDirectory, syncSpecDownload.link);
       }
@@ -135,7 +135,7 @@ export const getSyncSpecFile = (state: AutorunState, fileName: string): Promise<
     return Promise.reject('No sync spec');
   }
 
-  if (!(syncSpecFileMap as SyncSpecFileMap).hasOwnProperty(fileName)) {
+  if (!Object.prototype.hasOwnProperty.call((syncSpecFileMap as SyncSpecFileMap), fileName)) {
     return Promise.reject('file not found');
   }
   const syncSpecFile: SyncSpecDownload = (syncSpecFileMap as SyncSpecFileMap)[fileName];
@@ -151,10 +151,9 @@ export const getSyncSpecFile = (state: AutorunState, fileName: string): Promise<
     });
 };
 
-export function
-  getSyncSpecReferencedFile(fileName: string, syncSpecFileMap: SyncSpecFileMap, rootPath: string): Promise<object> {
+export function getSyncSpecReferencedFile(fileName: string, syncSpecFileMap: SyncSpecFileMap, rootPath: string): Promise<object> {
 
-  if (!syncSpecFileMap.hasOwnProperty(fileName)) {
+  if (!Object.prototype.hasOwnProperty.call((syncSpecFileMap), fileName)) {
     return Promise.reject('file not found');
   }
   const syncSpecFile: SyncSpecDownload = syncSpecFileMap[fileName];

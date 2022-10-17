@@ -12,7 +12,7 @@ import {
   AutorunState,
   autorunStateFromState,
 } from '../type';
-import { getAutoschedule, getHsmMap } from '../selector';
+import { getHsmMap } from '../selector';
 import { Sign } from './sign';
 import {
   AutorunVoidThunkAction,
@@ -25,7 +25,6 @@ import {
 /** @internal */
 /** @private */
 export interface AutorunProps {
-  autoschedule: AutorunSchedule | null;
   bsdm: DmState;
   hsmMap: HsmMap;
   onInitPresentation: () => AutorunVoidThunkAction;
@@ -55,7 +54,7 @@ class AutorunComponent extends React.Component<any> {
     }
 
     for (const hsmId in this.props.hsmMap) {
-      if (this.props.hsmMap.hasOwnProperty(hsmId)) {
+      if (Object.prototype.hasOwnProperty.call(this.props.hsmMap, hsmId)) {
         const hsm = this.props.hsmMap[hsmId];
         if (!hsm.initialized) {
           initializationComplete = false;
@@ -87,7 +86,6 @@ function mapStateToProps(state: AutorunState): Partial<AutorunProps> {
 
   return {
     bsdm: state.bsdm,
-    autoschedule: getAutoschedule(autorunState),
     hsmMap: getHsmMap(autorunState),
   };
 }
