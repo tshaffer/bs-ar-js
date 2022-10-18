@@ -11,8 +11,6 @@ import {
 } from '../type';
 import { find, isNil, isString } from 'lodash';
 import { HsmMap } from '../type';
-import { dmGetMediaStateById, dmFilterDmState, DmDerivedContentItem } from '@brightsign/bsdatamodel';
-import { ContentItemType } from '@brightsign/bscore';
 
 // ------------------------------------
 // Selectors
@@ -111,7 +109,7 @@ export function getZoneHsmList(state: any): Hsm[] {
   const hsmList: Hsm[] = [];
   const hsmById: HsmMap = autorunState.bsPlayer.hsmState.hsmById;
   for (const hsmId in hsmById) {
-    if (hsmById.hasOwnProperty(hsmId)) {
+    if (Object.prototype.hasOwnProperty.call(hsmById, hsmId)) {
       const hsm: Hsm = hsmById[hsmId];
       if (hsm.type === 'VideoOrImages') {
         hsmList.push(hsm);
@@ -159,7 +157,7 @@ export const getIsHsmInitialized = (state: any): boolean => {
   const autorunState: AutorunState = autorunStateFromState(state);
   const hsmMap: HsmMap = getHsmMap(autorunState);
   for (const hsmId in hsmMap) {
-    if (hsmMap.hasOwnProperty(hsmId)) {
+    if (Object.prototype.hasOwnProperty.call(hsmMap, hsmId)) {
       const hsm: Hsm = hsmMap[hsmId];
       if (!hsm.initialized) {
         return false;

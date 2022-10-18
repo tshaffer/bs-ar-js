@@ -1,8 +1,5 @@
 import {
   HStateSpecification,
-  // HStateType,
-  // MediaHState,
-  // MediaHStateParamsData,
   MediaHStateData
 } from '../../type';
 import { addHState } from '../../model';

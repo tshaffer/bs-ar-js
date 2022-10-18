@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import { createZoneHsm } from './zoneHsm';
 import {
   DmZone,
@@ -8,10 +9,6 @@ import {
   dmGetMediaStateById,
   BsDmId,
   dmGetInitialMediaStateIdForZone,
-  // dmGetContainedMediaStateIdsForMediaState,
-  // DmDataFeedContentItem,
-  // DmcDataFeed,
-  // dmGetDataFeedById,
 } from '@brightsign/bsdatamodel';
 import {
   MediaZoneHsmProperties,

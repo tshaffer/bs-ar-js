@@ -25,14 +25,9 @@ export interface MediaHStateData {
   mediaStateData?: MediaHStateParamsData | null;
 }
 
-// export type MediaHStateParamsData = (MediaHStateCustomData & MediaHStateTimerData) | null;
 export type MediaHStateParamsData = MediaHStateCustomData;
 
 export type MediaHStateCustomData = ImageStateData | VideoStateData;
-
-// export interface MediaHStateTimerData {
-//   timeoutId?: number;
-// }
 
 export interface ImageStateData {
   timeoutId?: number;

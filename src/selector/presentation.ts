@@ -4,7 +4,6 @@ import isomorphicPath from 'isomorphic-path';
 
 import {
   AutorunState,
-  // FileLUT, 
   SyncSpecDownload,
   AutorunSchedule,
   SyncSpecFileMap,
@@ -15,7 +14,6 @@ import {
 } from '../type';
 import { DmState, dmFilterDmState, dmGetAssetItemListForFileName } from '@brightsign/bsdatamodel';
 import { BsAssetItem } from '@brightsign/bscore';
-// import AssetPool from '@brightsign/assetpool';
 
 // ------------------------------------
 // Selectors
@@ -208,8 +206,3 @@ export function getFeedCacheRoot(state: any): string {
   const rootDirectory = getSrcDirectory(state);
   return isomorphicPath.join(rootDirectory, 'feed_cache');
 }
-
-// export function getFeedAssetPool(state: any): AssetPool {
-//   const feedPoolDirectory = getFeedPoolDirectory(state);
-//   return new AssetPool(feedPoolDirectory);
-// }

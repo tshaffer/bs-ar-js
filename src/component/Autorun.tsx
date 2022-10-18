@@ -7,7 +7,6 @@ import {
   initPresentation,
 } from '../controller/appController';
 import {
-  AutorunSchedule,
   HsmMap,
   AutorunState,
   autorunStateFromState,
@@ -38,7 +37,6 @@ export interface AutorunProps {
 // Component
 // -----------------------------------------------------------------------
 
-// class AutorunComponent extends React.Component<AutorunProps> {
 class AutorunComponent extends React.Component<any> {
   componentDidMount() {
     this.props.onInitPresentation();

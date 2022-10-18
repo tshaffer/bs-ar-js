@@ -21,13 +21,11 @@ import {
 } from '../../model';
 import {
   isNil,
-  //  isString
 } from 'lodash';
 import { setHsmTop } from '../../model';
 
 import {
   AutorunState,
-  // PpSchedule,
 } from '../../type';
 import {
   AutorunDispatch,
@@ -36,17 +34,10 @@ import {
 } from '../../model';
 
 import {
-  // getAutoschedule,
-  // getSyncSpecFileMap,
-  // getSrcDirectory,
   getZoneHsmList,
-  // getDataFeedById,
-  // getSyncSpecReferencedFile,
 } from '../../selector';
 import {
   BsDmId,
-  // DmSignState,
-  // dmOpenSign,
   DmState,
   dmGetZoneById,
   DmZone,
@@ -160,12 +151,8 @@ export const STWaitingEventHandler = (
     stateData.nextStateId = null;
 
     if (event.EventType && event.EventType === 'ENTRY_SIGNAL') {
-      // console.log(hState.id + ': entry signal');
       return 'HANDLED';
     } else if (event.EventType && event.EventType === 'TRANSITION_TO_PLAYING') {
-      // console.log(hState.id + ': TRANSITION_TO_PLAYING event received');
-      // const hsmId: string = hState.hsmId;
-      // const hsm: PpHsm = getHsmById(bsPpStateFromBaApUiState(getState()), hsmId);
       const stPlayingState: HState | null = getHStateByName(autorunStateFromState(getState()), 'Playing');
       if (!isNil(stPlayingState)) {
         stateData.nextStateId = stPlayingState!.id;
@@ -196,7 +183,6 @@ export const launchPresentationPlayback = (): AutorunVoidThunkAction => {
     const zoneIds: BsDmId[] = dmGetZonesForSign(bsdm);
     zoneIds.forEach((zoneId: BsDmId) => {
       const bsdmZone: DmZone = dmGetZoneById(bsdm, { id: zoneId }) as DmZone;
-      console.log(bsdmZone);
       dispatch(createMediaZoneHsm(zoneId, bsdmZone.type.toString(), bsdmZone));
     });
 

@@ -48,7 +48,6 @@ const getHostConfig = (): Promise<string> => {
   const hc = new HostConfig();
   return hc.getConfig()
     .then((config: any) => {
-      console.log('config.hostName');
       return Promise.resolve(config['hostName']);
     }).catch((e: any) => {
       console.log('hostConfig.getConfig error: ');

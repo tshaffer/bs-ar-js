@@ -41,7 +41,6 @@ export const STVideoStateEventHandler = (
 ): AutorunVoidThunkAction => {
   return (dispatch: AutorunDispatch) => {
     if (event.EventType === 'ENTRY_SIGNAL') {
-      // console.log('STVideoStateEventHandler: entry signal');
       dispatch(launchTimer(hState));
       return 'HANDLED';
     } else if (event.EventType === 'EXIT_SIGNAL') {

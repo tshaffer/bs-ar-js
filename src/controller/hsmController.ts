@@ -1,5 +1,3 @@
-import { Store } from 'redux';
-
 import {
   HsmEventType,
   Hsm,
@@ -33,17 +31,6 @@ import {
 } from '../selector';
 import { isNil } from 'lodash';
 
-export let _bsPpStore: Store<AutorunState>;
-
-/** @internal */
-/** @private */
-export function initPlayer(store: Store<AutorunState>) {
-  _bsPpStore = store;
-  return ((dispatch: AutorunDispatch) => {
-    // dispatch(launchHSM());
-  });
-}
-
 /** @internal */
 /** @private */
 export function launchHsm() {
@@ -75,9 +62,6 @@ function dispatchHsmEvent(
 ): AutorunVoidThunkAction {
 
   return ((dispatch: AutorunDispatch, getState: () => AutorunState) => {
-
-    // console.log('dispatchHsmEvent:');
-    // console.log(event.EventType);
 
     const state: AutorunState = autorunStateFromState(getState());
 
