@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { isNil } from 'lodash';
+import { isNil, isString } from 'lodash';
 import isomorphicPath from 'isomorphic-path';
 import * as fs from 'fs-extra';
+
+import * as process from 'process';
 
 import HostConfig from '@brightsign/hostconfiguration';
 
@@ -10,6 +12,7 @@ import {
   RawSyncSpec,
   AutorunSchedule,
   SyncSpecFileMap,
+  Dimensions,
 } from '../type';
 import {
   AutorunDispatch,
@@ -78,9 +81,6 @@ const loadPresentationData = (): AutorunVoidPromiseThunkAction => {
 
 const setSrcDirectory = (): AutorunVoidThunkAction => {
   return ((dispatch: AutorunDispatch, getState: () => AutorunState) => {
-
-    const process = require('process');
-
     const autorunState: AutorunState = autorunStateFromState(getState());
     const runtimeEnvironment: RuntimeEnvironment = getRuntimeEnvironment(autorunState);
     let srcDirectory = '';
@@ -88,12 +88,18 @@ const setSrcDirectory = (): AutorunVoidThunkAction => {
       if (runtimeEnvironment === RuntimeEnvironment.Dev) {
         require('dotenv').config();
 
-        dispatch(updateScreenDimensions({
-          width: process.env.SCREEN_WIDTH,
-          height: process.env.SCREEN_HEIGHT,
-        }));
-
-        srcDirectory = process.env.SOURCE_DIRECTORY;
+        let screenDimensions: Dimensions = {
+          width: 1920,
+          height: 1080,
+        };
+        if (isString(process.env.SCREEN_WIDTH) && isString(process.env.SCREEN_HEIGHT)) {
+          screenDimensions = {
+            width: parseInt(process.env.SCREEN_WIDTH, 10),
+            height: parseInt(process.env.SCREEN_HEIGHT, 10),
+          };
+        }
+        dispatch(updateScreenDimensions({ width: screenDimensions.width, height: screenDimensions.height }));
+        srcDirectory = process.env.SOURCE_DIRECTORY as string;
       } else if (runtimeEnvironment === RuntimeEnvironment.BaconPreview) {
         srcDirectory = '/Users/tedshaffer/Desktop/autotron-2020';
       } else {
