@@ -5,10 +5,12 @@ import {
   Action,
   Dispatch,
   ActionCreator,
+  AnyAction,
 } from 'redux';
-import { 
-  AutorunPlayerState,
- } from '../type';
+import { ThunkDispatch } from 'redux-thunk';
+import {
+  AutorunPlayerState, AutorunState,
+} from '../type';
 
 // -----------------------------------------------------------------------
 // Actions
@@ -26,7 +28,7 @@ export interface AutorunModelBaseAction extends Action {
 /** @internal */
 /** @private */
 export interface AutorunModelAction<T> extends AutorunModelBaseAction {
-  payload: T;     // override payload with specific parameter type
+  payload: T | any;     // override payload with specific parameter type
 }
 
 /** @internal */
@@ -38,31 +40,37 @@ export type AutorunModelThunkAction<T> = (
   extraArgument: undefined,
 ) => T;
 
+
+export type AutorunDispatch = ThunkDispatch<AutorunState, undefined, AutorunAction<AnyAction>>;
+export type AutorunVoidThunkAction = (dispatch: AutorunDispatch, getState: () => AutorunState, extraArgument: undefined) => void;
+export type AutorunStringThunkAction = (dispatch: AutorunDispatch, getState: () => AutorunState, extraArgument: undefined) => string;
+export type AutorunVoidPromiseThunkAction = (dispatch: AutorunDispatch, getState: () => AutorunState, extraArgument: undefined) => Promise<void>;
+export type AutorunAnyPromiseThunkAction = (dispatch: AutorunDispatch, getState: () => AutorunState, extraArgument: undefined) => Promise<any>;
+
+export interface AutorunBaseActionMetadata {
+  dispatchList?: AutorunBaseAction[];
+  reason?: string;
+}
+
 export interface AutorunBaseAction extends Action {
   type: string;
-  payload: {} | null | any; // TEDTODO - any is bogus, but required for AutorunAction definition
+  payload: {} | null;
   error?: boolean;
   meta?: {};
 }
 
 export interface AutorunAction<T> extends AutorunBaseAction {
-  payload: T;
+  payload: T | any;
 }
 
-// export type AutorunDispatch = Dispatch<AutorunState>;
-export type AutorunDispatch = Dispatch<any>;
-export type AutorunVoidThunkAction = any;
-// (dispatch: AutorunDispatch, getState: () => BaApUiState, extraArgument: undefined) => void;
-export type AutorunStringThunkAction = any;
-// (dispatch: AutorunDispatch, getState: () => BaApUiState, extraArgument: undefined) => string;
-export type AutorunVoidPromiseThunkAction = any;
-// (dispatch: AutorunDispatch, getState: () => BaApUiState, extraArgument: undefined) => Promise<void>;
-export type AutorunThunkAction<T> = any;
-// (dispatch: AutorunDispatch, getState: () => BaApUiState, extraArgument: undefined) => AutorunAction<T>;
-export type AutorunAnyPromiseThunkAction = any;
-// (dispatch: AutorunDispatch, getState: () => BaApUiState, extraArgument: undefined) => Promise<any>;
+export type AutorunActionCreator<T> = ActionCreator<AutorunAction<T>>;
+export type AutorunThunkAction<T> = (dispatch: AutorunDispatch, getState: () => AutorunState, extraArgument: undefined) => AutorunAction<T>;
 
-// export type AutorunActionCreator<T> = ActionCreator<AutorunAction<T>>;
+export type AutorunSpecificThunkAction<T> = (dispatch: AutorunDispatch, getState: () => AutorunState, extraArgument: undefined) => T;
+export interface AutorunBatchAction extends Action {
+  type: string;
+  payload: AutorunBaseAction[];
+}
 
 export interface AutorunModelBatchAction extends Action {
   type: string;

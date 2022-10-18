@@ -133,7 +133,7 @@ const setAutoschedule = (): AutorunVoidPromiseThunkAction => {
       getSyncSpecFile(autorunState, 'autoschedule.json')
         .then((autoSchedule: AutorunSchedule) => {
           dispatch(updatePresentationAutoschedule(autoSchedule));
-          return resolve(null);
+          return resolve();
         });
     });
   });

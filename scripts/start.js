@@ -11,7 +11,7 @@ process.on('unhandledRejection', err => {
 // Ensure environment variables are read.
 require('../config/env');
 
-const env = require('../config/env');
+// const env = require('../config/env');
 const paths = require('../config/paths');
 var spawn = require('cross-spawn');
 const chalk = require('react-dev-utils/chalk');
