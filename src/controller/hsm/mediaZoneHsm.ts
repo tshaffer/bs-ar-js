@@ -88,18 +88,18 @@ const createMediaHState = (
           videoStateIdToHState[bsdmMediaState.id] = videoHState;
           dispatch(updateHsmProperties({ id: hsmId, mediaStateIdToHState: videoStateIdToHState }));
           return videoHStateId;
-        // case ContentItemType.MrssFeed:
-        //   const dataFeedContentItem: DmDataFeedContentItem = bsdmMediaState.contentItem as DmDataFeedContentItem;
-        //   const dataFeedId: BsDmId = dataFeedContentItem.dataFeedId;
-        //   const dataFeed: DmcDataFeed | null =
-        //     dmGetDataFeedById(dmFilterDmState(autorunStateFromState(getState())), { id: dataFeedId });
-        //   if (!isNil(dataFeed)) {
-        //     const mrssHStateId: string = dispatch(createMrssState(hsmId, bsdmMediaState, dataFeed.id, superStateId));
-        //     const mrssHState: HState | null = getHStateById(autorunStateFromState(getState()), mrssHStateId);
-        //     const mrssStateIdToHState: LUT = cloneDeep(hsm.properties as MediaZoneHsmProperties).mediaStateIdToHState;
-        //     mrssStateIdToHState[bsdmMediaState.id] = mrssHState;
-        //     dispatch(updateHsmProperties({ id: hsmId, mediaStateIdToHState: mrssStateIdToHState }));
-        //   }
+          // case ContentItemType.MrssFeed:
+          //   const dataFeedContentItem: DmDataFeedContentItem = bsdmMediaState.contentItem as DmDataFeedContentItem;
+          //   const dataFeedId: BsDmId = dataFeedContentItem.dataFeedId;
+          //   const dataFeed: DmcDataFeed | null =
+          //     dmGetDataFeedById(dmFilterDmState(autorunStateFromState(getState())), { id: dataFeedId });
+          //   if (!isNil(dataFeed)) {
+          //     const mrssHStateId: string = dispatch(createMrssState(hsmId, bsdmMediaState, dataFeed.id, superStateId));
+          //     const mrssHState: HState | null = getHStateById(autorunStateFromState(getState()), mrssHStateId);
+          //     const mrssStateIdToHState: LUT = cloneDeep(hsm.properties as MediaZoneHsmProperties).mediaStateIdToHState;
+          //     mrssStateIdToHState[bsdmMediaState.id] = mrssHState;
+          //     dispatch(updateHsmProperties({ id: hsmId, mediaStateIdToHState: mrssStateIdToHState }));
+          //   }
           break;
         // case ContentItemType.SuperState:
         //   const superStateHStateId: string = dispatch(createSuperState(hsmId, bsdmMediaState, superStateId));
