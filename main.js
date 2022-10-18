@@ -1,12 +1,9 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 console.log('Autorun.js');
+
 const electron = require('electron');
-// const { session } = require('electron');
 
-// Module to control application life.
-const { app } = electron;
-
-// Module to create native browser window.
-const { BrowserWindow } = electron;
+const { app, BrowserWindow, session } = electron;
 
 app.on('window-all-closed', function () {
   if (process.platform != 'darwin') {
@@ -19,6 +16,9 @@ app.on('window-all-closed', function () {
 let win;
 
 function createWindow() {
+
+  // startDevToolsInstall();
+
   // Create the browser window.
   // win = new BrowserWindow({width: 1400, height: 800});
   // win = new BrowserWindow({ width: 1400, height: 1100 });
@@ -38,14 +38,14 @@ function createWindow() {
   // and load the index.html of the app.
   win.loadURL(`file://${__dirname}/index.html`);
 
-  // session.defaultSession.loadExtension('/Users/tedshaffer/Library/Application Support/Google/Chrome/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/2.17.0_0').then(({ id }) => {
-  //   console.log('redux extension id');
-  //   console.log(id);
-
-  // Open the DevTools.
-  win.webContents.openDevTools();
-  // });
-
+  // session.defaultSession.loadExtension('/Users/tedshaffer/Library/Application Support/Google/Chrome/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/2.17.0_0')
+  session.defaultSession.loadExtension('/Users/tedshaffer/Library/Application Support/Google/Chrome/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/3.0.11_7')
+    .then(({ id }) => {
+      console.log('redux extension id');
+      console.log(id);
+      // Open the DevTools.
+      win.webContents.openDevTools();
+    });
 
   // Emitted when the window is closed.
   win.on('closed', () => {
@@ -77,3 +77,19 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+function startDevToolsInstall() {
+  const devToolsInstaller = require('electron-devtools-installer');
+  const installer = devToolsInstaller.default;
+  installer(devToolsInstaller.REACT_DEVELOPER_TOOLS)
+    .then((name) => console.info(`extension installed: ${name}`))
+    .catch((err) => console.error(`error installing extension REACT_DEVELOPER_TOOLS: ${err}`));
+  // installer(devToolsInstaller.REACT_PERF)
+  //   .then((name) => console.info(`extension installed: ${name}`))
+  //   .catch((err) => console.error(`error installing extension REACT_PERF: ${err}`));
+  installer(devToolsInstaller.REDUX_DEVTOOLS)
+    .then((name) => console.info(`extension installed: ${name}`))
+    .catch((err) => console.error(`error installing extension REDUX_DEVTOOLS: ${err}`));
+}
+
+

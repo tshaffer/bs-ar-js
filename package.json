@@ -8,7 +8,8 @@
     "buildW": "node node_modules/webpack/bin/webpack --config ./webpack.config.js --watch",
     "build-electron": "cross-env NODE_ENV=develop PLATFORM=electron node scripts/build.js",
     "build-brightsign": "cross-env NODE_ENV=develop PLATFORM=brightsign node scripts/build.js",
-    "start-electron": "cross-env NODE_ENV=develop PLATFORM=electron node scripts/start.js"
+    "start-electron": "cross-env NODE_ENV=develop PLATFORM=electron node scripts/start.js",
+    "build-dev-electron-main": "webpack --config webpack.config.js"
   },
   "author": "Ted",
   "license": "ISC",
