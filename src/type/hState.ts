@@ -4,9 +4,7 @@ export class HStateType {
   static Playing = 'Playing';
   static Waiting = 'Waiting';
   static Image = 'Image';
-  static Mrss = 'Mrss';
   static Video = 'Video';
-  static SuperState = 'SuperState';
 }
 Object.freeze(HStateType);
 
@@ -30,7 +28,7 @@ export interface MediaHStateData {
 // export type MediaHStateParamsData = (MediaHStateCustomData & MediaHStateTimerData) | null;
 export type MediaHStateParamsData = MediaHStateCustomData;
 
-export type MediaHStateCustomData = ImageStateData | VideoStateData | SuperStateData | MrssStateData;
+export type MediaHStateCustomData = ImageStateData | VideoStateData;
 
 // export interface MediaHStateTimerData {
 //   timeoutId?: number;
@@ -42,20 +40,6 @@ export interface ImageStateData {
 
 export interface VideoStateData {
   timeoutId?: number;
-}
-
-export interface SuperStateData {
-  timeoutId?: number;
-}
-
-export interface MrssStateData {
-  timeoutId?: number;
-  dataFeedId: string;
-  currentFeedId: string | null;
-  pendingFeedId: string | null;
-  displayIndex: number;
-  firstItemDisplayed: boolean;
-  waitForContentTimer: any;
 }
 
 export interface HStateSpecification {
