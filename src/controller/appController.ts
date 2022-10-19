@@ -47,7 +47,7 @@ export const initPresentation = (): AutorunVoidThunkAction => {
   });
 };
 
-export const determineRuntimeEnvironment = (): Promise<any> => {
+export const inferRuntimeEnvironment = (): Promise<any> => {
 
   let runtimeEnvironment: RuntimeEnvironment = RuntimeEnvironment.Dev;
 
@@ -77,20 +77,10 @@ const getHostConfig = (): Promise<string> => {
 
 const loadPresentationData = (): AutorunVoidPromiseThunkAction => {
   return ((dispatch: AutorunDispatch) => {
-
-    let runtimeEnvironment: RuntimeEnvironment = RuntimeEnvironment.Dev;
-
-    return getHostConfig()
-      .then((hostName: string) => {
-        if (hostName !== 'myplayer') {
-          runtimeEnvironment = RuntimeEnvironment.BrightSign;
-        }
-        dispatch(updateRuntimeEnvironment(runtimeEnvironment));
-        dispatch(setSrcDirectory());
-        return dispatch(setSyncSpec())
-          .then(() => {
-            return dispatch(setAutoschedule());
-          });
+    dispatch(setSrcDirectory());
+    return dispatch(setSyncSpec())
+      .then(() => {
+        return dispatch(setAutoschedule());
       });
   });
 };
