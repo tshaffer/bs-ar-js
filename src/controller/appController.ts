@@ -47,6 +47,22 @@ export const initPresentation = (): AutorunVoidThunkAction => {
   });
 };
 
+export const determineRuntimeEnvironment = (): Promise<any> => {
+
+  let runtimeEnvironment: RuntimeEnvironment = RuntimeEnvironment.Dev;
+
+  return new Promise((resolve, reject) => {
+    const promise: Promise<string> = getHostConfig();
+    promise.then((hostName: string) => {
+      console.log('hostName: ', hostName);
+      if (hostName !== 'myplayer') {
+        runtimeEnvironment = RuntimeEnvironment.BrightSign;
+      }
+      return resolve(runtimeEnvironment);
+    });
+  });
+};
+
 const getHostConfig = (): Promise<string> => {
   const hc = new HostConfig();
   return hc.getConfig()
@@ -113,8 +129,6 @@ const setSrcDirectory = (): AutorunVoidThunkAction => {
     dispatch(updatePresentationSrcDirectory(srcDirectory));
   });
 };
-
-
 
 const setSyncSpec = (): AutorunVoidPromiseThunkAction => {
   return ((dispatch: AutorunDispatch, getState: () => any) => {
