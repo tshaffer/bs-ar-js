@@ -27,6 +27,7 @@ import {
   dmGetMediaStateById,
   dmFilterDmState,
   DmcTransition,
+  DmSuperStateContentItem,
 } from '@brightsign/bsdatamodel';
 import {
   HState,
@@ -106,7 +107,7 @@ const executeEventMatchAction = (
 
     const mediaZoneHsmData: MediaZoneHsmProperties = zoneHsm.properties as MediaZoneHsmProperties;
 
-    const targetHState: HState = mediaZoneHsmData.mediaStateIdToHState[targetMediaStateId];
+    let targetHState: HState = mediaZoneHsmData.mediaStateIdToHState[targetMediaStateId];
     if (!isNil(targetHState)) {
 
       // check to see if target of transition is a superState
@@ -117,7 +118,11 @@ const executeEventMatchAction = (
         }
       );
       if (!isNil(targetMediaState)) {
-        // check for SuperState content item
+        if (targetMediaState!.contentItem.type === ContentItemType.SuperState) {
+          const superStateContentItem = targetMediaState!.contentItem as DmSuperStateContentItem;
+          const initialMediaStateId = superStateContentItem.initialMediaStateId;
+          targetHState = mediaZoneHsmData.mediaStateIdToHState[initialMediaStateId];
+        }
       } else {
         debugger;
       }

@@ -5,6 +5,7 @@ export class HStateType {
   static Waiting = 'Waiting';
   static Image = 'Image';
   static Video = 'Video';
+  static SuperState = 'SuperState';
 }
 Object.freeze(HStateType);
 
@@ -27,13 +28,17 @@ export interface MediaHStateData {
 
 export type MediaHStateParamsData = MediaHStateCustomData;
 
-export type MediaHStateCustomData = ImageStateData | VideoStateData;
+export type MediaHStateCustomData = ImageStateData | VideoStateData | SuperStateData;
 
 export interface ImageStateData {
   timeoutId?: number;
 }
 
 export interface VideoStateData {
+  timeoutId?: number;
+}
+
+export interface SuperStateData {
   timeoutId?: number;
 }
 

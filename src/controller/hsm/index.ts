@@ -5,4 +5,5 @@ export * from './mediaZoneHsm';
 export * from './playerHsm';
 export * from './zoneHsm';
 export * from './imageState';
+export * from './superState';
 export * from './videoState';

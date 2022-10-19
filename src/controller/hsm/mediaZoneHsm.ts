@@ -9,6 +9,7 @@ import {
   dmGetMediaStateById,
   BsDmId,
   dmGetInitialMediaStateIdForZone,
+  dmGetContainedMediaStateIdsForMediaState,
 } from '@brightsign/bsdatamodel';
 import {
   MediaZoneHsmProperties,
@@ -24,6 +25,7 @@ import {
 import { ContentItemType } from '@brightsign/bscore';
 import { createImageState } from './imageState';
 import { createVideoState } from './videoState';
+import { createSuperState } from './superState';
 import { isNil, cloneDeep } from 'lodash';
 import { Hsm } from '../../type';
 import {
@@ -81,11 +83,36 @@ const createMediaHState = (
           videoStateIdToHState[bsdmMediaState.id] = videoHState;
           dispatch(updateHsmProperties({ id: hsmId, mediaStateIdToHState: videoStateIdToHState }));
           return videoHStateId;
+        case ContentItemType.SuperState:
+          const superStateHStateId: string = dispatch(createSuperState(hsmId, bsdmMediaState, superStateId));
+          const superStateHState: HState | null =
+            getHStateById(autorunStateFromState(getState()), superStateHStateId) as HState;
+          const superStateStateIdToHState: LUT =
+            cloneDeep(hsm.properties as MediaZoneHsmProperties).mediaStateIdToHState;
+          superStateStateIdToHState[bsdmMediaState.id] = superStateHState;
+          dispatch(updateHsmProperties({ id: hsmId, mediaStateIdToHState: superStateStateIdToHState }));
+          dispatch(addSuperStateContent(
+            dmFilterDmState(autorunStateFromState(getState())), superStateHState, bsdmMediaState));
+          return superStateHStateId;
         default:
           return '';
       }
     }
     return '';
+  });
+};
+
+const addSuperStateContent = (bsdm: DmState, superHState: HState, superStateMediaState: DmMediaState): any => {
+
+  return ((dispatch: AutorunDispatch, getState: () => AutorunState) => {
+
+    const superStateId: BsDmId = superStateMediaState.id;
+    const mediaStateIds: BsDmId[] = dmGetContainedMediaStateIdsForMediaState(bsdm, { id: superStateId });
+
+    for (const mediaStateId of mediaStateIds) {
+      const mediaState: DmMediaState = dmGetMediaStateById(bsdm, { id: mediaStateId }) as DmMediaState;
+      dispatch(createMediaHState(superHState.hsmId, mediaState, superHState.id));
+    }
   });
 };
 
