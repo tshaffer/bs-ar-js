@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import {
   AutorunState,
   HsmEventType,
@@ -8,6 +9,10 @@ import {
   autorunStateFromState,
   MediaHState,
   HsmTimerType,
+  HsmMap,
+  HsmType,
+  HsmKeydownType,
+  HsmBpType,
 } from '../../type';
 import {
   AutorunDispatch,
@@ -28,15 +33,19 @@ import {
   dmFilterDmState,
   DmcTransition,
   DmSuperStateContentItem,
+  DmBpEventData,
+  DmEventData,
+  DmKeyboardEventData,
 } from '@brightsign/bsdatamodel';
 import {
   HState,
 } from '../../type';
 import { EventType, EventIntrinsicAction, ContentItemType } from '@brightsign/bscore';
 import {
-  getHsmById, getHStateById,
+  getActiveHStateIdByHsmId,
+  getHsmById, getHsmMap, getHStateById,
 } from '../../selector';
-import { isNil, isNumber } from 'lodash';
+import { isNil, isNumber, isString } from 'lodash';
 import {
   addHsmEvent,
 } from '../hsmController';
@@ -136,16 +145,89 @@ const executeEventMatchAction = (
   return 'SUPER';
 };
 
-const eventDataMatches = (matchedEvent: DmcEvent, dispatchedEvent: HsmEventType): boolean => {
-  return true;
-};
-
 const getMatchedEvent = (mediaState: DmMediaState, dispatchedEvent: HsmEventType): DmcEvent | null => {
+
+  let mediaStateEventData: DmEventData | null = null;
+
   const mediaStateEvents: DmcEvent[] = (mediaState as DmcMediaState).eventList;
   for (const mediaStateEvent of mediaStateEvents) {
     if (mediaStateEvent.type === dispatchedEvent.EventType) {
-      if (eventDataMatches(mediaStateEvent, dispatchedEvent)) {
-        return mediaStateEvent;
+      // TODO - general purpose way to do this?
+      switch (mediaStateEvent.type) {
+        case EventType.Keyboard:
+          mediaStateEventData = mediaStateEvent.data;
+          if (isNil(mediaStateEventData)) {
+            return null;
+          }
+          if (isNil(dispatchedEvent.data) || !isString(dispatchedEvent.data)) {
+            return null;
+          }
+          if ((mediaStateEventData as DmKeyboardEventData).data === dispatchedEvent.data) {
+            return mediaStateEvent;
+          }
+          break;
+        case EventType.Bp:
+          mediaStateEventData = mediaStateEvent.data;
+          if (isNil(mediaStateEventData)) {
+            return null;
+          }
+          // if (isNil(dispatchedEvent.data) || !isString(dispatchedEvent.data)) {
+          //   return null;
+          // }
+          console.log('BP Event received');
+          console.log('dispatchedEvent.data');
+          console.log(dispatchedEvent.data);
+          console.log('bpEventData');
+          console.log((mediaStateEventData as DmBpEventData).bpType);
+          console.log((mediaStateEventData as DmBpEventData).bpIndex);
+          console.log((mediaStateEventData as DmBpEventData).buttonNumber);
+          console.log((mediaStateEventData as DmBpEventData).pressContinuous);
+
+          /*
+oncontroldown invoked: 0
+BP Event received
+dispatchedEvent.data
+0
+
+bpEventData
+bp900
+a
+0
+null
+
+BP Event received
+dispatchedEvent.data
+0
+
+bpEventData
+bp900
+a
+1
+null
+          */
+          console.log('(mediaStateEventData as DmBpEventData).buttonNumber.toString().length');
+          console.log((mediaStateEventData as DmBpEventData).buttonNumber.toString().length);
+          console.log('isString(dispatchedEvent.data)');
+          console.log(isString(dispatchedEvent.data));
+          if (isString(dispatchedEvent.data)) {
+            console.log('dispatchedEvent.data.length');
+            console.log(dispatchedEvent.data.length);
+          }
+          // if ((mediaStateEventData as DmBpEventData).buttonNumber.toString() === dispatchedEvent.data) {
+          //   return mediaStateEvent;
+          // }
+          if ((mediaStateEventData as DmBpEventData).buttonNumber === dispatchedEvent.data) {
+            return mediaStateEvent;
+          }
+          break;
+        // TODO - is this correct for timer? what about multiple timers?
+        // TODO - what about other EventType's?
+        case EventType.Timer:
+          return mediaStateEvent;
+        case EventType.MediaEnd:
+          return mediaStateEvent;
+        default:
+          break;
       }
     }
   }
@@ -175,7 +257,7 @@ export const mediaHStateExitHandler = (
       if (!isNil(mediaHState.data.mediaStateData)) {
         if (isNumber(mediaHState.data.mediaStateData.timeoutId)) {
           clearTimeout(mediaHState.data.mediaStateData.timeoutId);
-          // TEDTODO - is it okay to dispatching an action inside of a whatever
+          // TEDTODO - is it okay to dispatch an action inside of a whatever
           dispatch(setMediaHStateTimeoutId(hStateId, 0));
         }
       }
@@ -187,6 +269,11 @@ interface TimeoutEventCallbackParams {
   dispatch: AutorunDispatch;
   hState: HState;
 }
+
+// interface KeydownEventCallbackParams {
+//   dispatch: AutorunDispatch;
+//   hState: HState;
+// }
 
 export const launchTimer = (
   hState: HState,
@@ -212,7 +299,7 @@ export const launchTimer = (
             hState,
           };
           const timeoutId: number =
-            setTimeout(timeoutHandler, interval * 1000, timeoutEventCallbackParams) as unknown as number;
+            setTimeout(timeoutEventHandler, interval * 1000, timeoutEventCallbackParams) as unknown as number;
           dispatch(setMediaHStateTimeoutId(hState.id, timeoutId));
         }
       }
@@ -220,10 +307,50 @@ export const launchTimer = (
   };
 };
 
-const timeoutHandler = (callbackParams: TimeoutEventCallbackParams): void => {
+const timeoutEventHandler = (callbackParams: TimeoutEventCallbackParams): void => {
   const event: HsmEventType = {
     EventType: EventType.Timer,
     EventData: HsmTimerType.MediaHState,
   };
   callbackParams.dispatch(addHsmEvent(event));
+};
+
+export const keydownEventHandler = (keyName: string): any => {
+  return (dispatch: AutorunDispatch, getState: () => any) => {
+
+    // TEDTODO - get the current state - not sure what the actual right way to do this is.
+    // const autorunState = autorunStateFromState(getState());
+    // const hsmMap: HsmMap = getHsmMap(autorunState);
+    // for (const hsmId in hsmMap) {
+    //   if (Object.prototype.hasOwnProperty.call(hsmMap, hsmId)) {
+    //     const hsm: Hsm = hsmMap[hsmId];
+    //     // TEDTODO - total hack!!
+    //     if (hsm.type === HsmType.VideoOrImages) {
+    //       const activeHState: HState | null = getActiveHStateIdByHsmId(autorunState, hsm.id);
+    //       if (!isNil(activeHState)) {
+    //         console.log('activeHState: ', activeHState);
+    //       }
+    //     }
+    //   }
+    // }
+    // TEDTODO - doesn't look like the current state is used / needed???? It's retrieved elsewhere.
+
+    const event: HsmEventType = {
+      EventType: EventType.Keyboard,
+      EventData: HsmKeydownType.MediaHState,
+      data: keyName,
+    };
+    dispatch(addHsmEvent(event));
+  };
+};
+
+export const bpEventHandler = (code: string): any => {
+  return (dispatch: AutorunDispatch, getState: () => any) => {
+    const event: HsmEventType = {
+      EventType: EventType.Bp,
+      EventData: HsmKeydownType.MediaHState,
+      data: code,
+    };
+    dispatch(addHsmEvent(event));
+  };
 };
