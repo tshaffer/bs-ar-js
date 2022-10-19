@@ -67,14 +67,10 @@ export class VideoComponent extends React.Component<any> {
 // Container
 // -----------------------------------------------------------------------
 
-// TEDTODO - real return value didn't work, so put in any
-const mapStateToProps = (state: any, ownProps: VideoPropsFromParent): any => {
+const mapStateToProps = (state: any, ownProps: VideoPropsFromParent): Partial<VideoProps> => {
   state = autorunStateFromState(state);
   return {
     filePath: getAssetPath(state, ownProps.assetName),
-    width: ownProps.zoneWidth,
-    height: ownProps.zoneHeight,
-    assetName: ownProps.assetName,
   };
 };
 

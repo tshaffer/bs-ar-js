@@ -25,6 +25,7 @@ import {
 } from '../../model';
 import { STVideoStateEventHandler } from './videoState';
 import { STImageStateEventHandler } from './imageState';
+import { STSuperStateEventHandler } from './superState';
 
 export const hsmConstructorFunction = (hsmId: string): AutorunVoidThunkAction => {
   return ((dispatch: AutorunDispatch, getState: () => AutorunState) => {
@@ -90,6 +91,9 @@ export const HStateEventHandler = (
           break;
         case HStateType.Video:
           retVal = dispatch(STVideoStateEventHandler(hState, event, stateData));
+          break;
+        case HStateType.SuperState:
+          retVal = dispatch(STSuperStateEventHandler(hState, event, stateData));
           break;
         default:
           debugger;
