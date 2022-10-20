@@ -62,7 +62,7 @@ export function initializeHsm(
       return dispatch(action).
         then((activeState: HState) => {
           dispatch(setActiveHState(hsmId, activeState));
-          dispatch(completeHsmInitialization(hsmId));
+          dispatch(transitionToInitialState(hsmId));
           // const hsmInitializationComplete = getHsmInitialized(autorunStateFromState(getState()), hsmId);
           getHsmInitialized(autorunStateFromState(getState()), hsmId);
           return Promise.resolve();
@@ -73,7 +73,7 @@ export function initializeHsm(
 }
 
 // TEDTODO - complete analysis to determine if tmpActiveState and activeState are both required.
-function completeHsmInitialization(
+function transitionToInitialState(
   hsmId: string,
 ): AutorunVoidThunkAction {
 

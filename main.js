@@ -1,12 +1,10 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 console.log('Autorun.js');
 const electron = require('electron');
 // const { session } = require('electron');
 
-// Module to control application life.
-const { app } = electron;
 
-// Module to create native browser window.
-const { BrowserWindow } = electron;
+const { app, BrowserWindow, Menu } = electron;
 
 app.on('window-all-closed', function () {
   if (process.platform != 'darwin') {
@@ -27,7 +25,7 @@ function createWindow() {
 
   win = new BrowserWindow({
     width: 1400,
-    height: 1100,
+    height: 800,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -54,6 +52,29 @@ function createWindow() {
     // when you should delete the corresponding element.
     win = null;
   });
+
+  win.webContents.on('context-menu', (_, props) => {
+    const { x, y } = props;
+    const contextMenu = [{
+      label: 'Inspect',
+      click: () => {
+        if (win) {
+          win.webContents.inspectElement(x, y);
+        }
+      }
+    }, {
+      label: 'Reload',
+      click: () => {
+        if (win) {
+          win.webContents.reload();
+        }
+      }
+    }];
+    if (win) {
+      Menu.buildFromTemplate(contextMenu).popup(win);
+    }
+  });
+
 }
 
 // This method will be called when Electron has finished

@@ -58,7 +58,9 @@ export const mediaHStateEventHandler = (
 
   return (dispatch: AutorunDispatch, getState: () => any) => {
 
-    const dmState: DmState = dmFilterDmState(autorunStateFromState(getState()));
+    const autorunState: AutorunState = autorunStateFromState(getState());
+
+    const dmState: DmState = dmFilterDmState(autorunState);
     const mediaState: DmMediaState = dmGetMediaStateById(
       dmState,
       { id: (hState as MediaHState).data.mediaStateId }) as DmMediaState;
@@ -69,7 +71,7 @@ export const mediaHStateEventHandler = (
     const matchedEvent: DmcEvent | null = getMatchedEvent(mediaState, event);
 
     if (!isNil(matchedEvent)) {
-      return executeEventMatchAction(autorunStateFromState(getState()), hState, matchedEvent!, stateData);
+      return executeEventMatchAction(autorunState, hState, matchedEvent!, stateData);
     }
 
     stateData.nextStateId = hState.superStateId;
@@ -213,17 +215,15 @@ null
             console.log('dispatchedEvent.data.length');
             console.log(dispatchedEvent.data.length);
           }
-          // if ((mediaStateEventData as DmBpEventData).buttonNumber.toString() === dispatchedEvent.data) {
-          //   return mediaStateEvent;
-          // }
           if ((mediaStateEventData as DmBpEventData).buttonNumber === dispatchedEvent.data) {
             return mediaStateEvent;
           }
           break;
-        // TODO - is this correct for timer? what about multiple timers?
-        // TODO - what about other EventType's?
         case EventType.Timer:
-          return mediaStateEvent;
+          if (dispatchedEvent.data.mediaStateId === mediaState.id) {
+            return mediaStateEvent;
+          }
+          break;
         case EventType.MediaEnd:
           return mediaStateEvent;
         default:
@@ -270,11 +270,6 @@ interface TimeoutEventCallbackParams {
   hState: HState;
 }
 
-// interface KeydownEventCallbackParams {
-//   dispatch: AutorunDispatch;
-//   hState: HState;
-// }
-
 export const launchTimer = (
   hState: HState,
 ): AutorunVoidThunkAction => {
@@ -311,6 +306,10 @@ const timeoutEventHandler = (callbackParams: TimeoutEventCallbackParams): void =
   const event: HsmEventType = {
     EventType: EventType.Timer,
     EventData: HsmTimerType.MediaHState,
+    data: {
+      hStateId: callbackParams.hState.id,
+      mediaStateId: (callbackParams.hState as MediaHState).data.mediaStateId,
+    },
   };
   callbackParams.dispatch(addHsmEvent(event));
 };
