@@ -41,6 +41,7 @@ inferRuntimeEnvironment()
     console.log('inferRuntimeEnvironment returned: ', runtimeEnvironment);
 
     if (runtimeEnvironment === RuntimeEnvironment.BrightSign) {
+      // TODO - support more than just BP900A. Different string for constructor; pass different values to bpEventHandler
       const bp900_gpio = new BSControlPort('TouchBoard-0-GPIO');
       bp900_gpio.oncontroldown = (e: any) => {
         console.log('oncontroldown invoked: ' + e.code);

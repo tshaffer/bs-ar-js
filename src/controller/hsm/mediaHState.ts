@@ -213,9 +213,6 @@ null
             console.log('dispatchedEvent.data.length');
             console.log(dispatchedEvent.data.length);
           }
-          // if ((mediaStateEventData as DmBpEventData).buttonNumber.toString() === dispatchedEvent.data) {
-          //   return mediaStateEvent;
-          // }
           if ((mediaStateEventData as DmBpEventData).buttonNumber === dispatchedEvent.data) {
             return mediaStateEvent;
           }
