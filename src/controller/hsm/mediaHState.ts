@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import {
   AutorunState,
   HsmEventType,
@@ -31,6 +32,8 @@ import {
   dmFilterDmState,
   DmcTransition,
   DmSuperStateContentItem,
+  DmEventData,
+  DmKeyboardEventData,
 } from '@brightsign/bsdatamodel';
 import {
   HState,
@@ -40,10 +43,11 @@ import {
   getActiveHStateIdByHsmId,
   getHsmById, getHsmMap, getHStateById,
 } from '../../selector';
-import { isNil, isNumber } from 'lodash';
+import { isNil, isNumber, isString } from 'lodash';
 import {
   addHsmEvent,
 } from '../hsmController';
+import { match } from 'assert';
 
 export const mediaHStateEventHandler = (
   hState: HState,
@@ -141,15 +145,36 @@ const executeEventMatchAction = (
 };
 
 const eventDataMatches = (matchedEvent: DmcEvent, dispatchedEvent: HsmEventType): boolean => {
-  return true;
+  if (matchedEvent.type === dispatchedEvent.EventType) {
+
+  }
+  return false;
 };
 
 const getMatchedEvent = (mediaState: DmMediaState, dispatchedEvent: HsmEventType): DmcEvent | null => {
   const mediaStateEvents: DmcEvent[] = (mediaState as DmcMediaState).eventList;
   for (const mediaStateEvent of mediaStateEvents) {
     if (mediaStateEvent.type === dispatchedEvent.EventType) {
-      if (eventDataMatches(mediaStateEvent, dispatchedEvent)) {
-        return mediaStateEvent;
+      // TODO - general purpose way to do this?
+      switch (mediaStateEvent.type) {
+        case EventType.Keyboard:
+          const mediaStateEventData: DmEventData | null = mediaStateEvent.data;
+          if (isNil(mediaStateEventData)) {
+            return null;
+          }
+          if (isNil(dispatchedEvent.data) || !isString(dispatchedEvent.data)) {
+            return null;
+          }
+          if ((mediaStateEventData as DmKeyboardEventData).data === dispatchedEvent.data) {
+            return mediaStateEvent;
+          }
+          break;
+        // TODO - is this correct for timer? what about multiple timers?
+        // TODO - what about other EventType's?
+        case EventType.Timer:
+          return mediaStateEvent;
+        default:
+          break;
       }
     }
   }
@@ -256,7 +281,7 @@ export const keydownEventHandler = (keyName: string): any => {
     //   }
     // }
     // TEDTODO - doesn't look like the current state is used / needed???? It's retrieved elsewhere.
-    
+
     const event: HsmEventType = {
       EventType: EventType.Keyboard,
       EventData: HsmKeydownType.MediaHState,
