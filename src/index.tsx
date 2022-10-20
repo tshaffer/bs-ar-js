@@ -12,6 +12,7 @@ import { bsDmReducer } from '@brightsign/bsdatamodel';
 import { baCmReducer } from '@brightsign/ba-context-model';
 
 import {
+  bpEventHandler,
   inferRuntimeEnvironment,
   keydownEventHandler,
 } from './controller';
@@ -42,7 +43,8 @@ inferRuntimeEnvironment()
     if (runtimeEnvironment === RuntimeEnvironment.BrightSign) {
       const bp900_gpio = new BSControlPort('TouchBoard-0-GPIO');
       bp900_gpio.oncontroldown = (e: any) => {
-        processControlEvent(e);
+        console.log('oncontroldown invoked: ' + e.code);
+        store.dispatch(bpEventHandler(e.code));
         return;
       };
     }
@@ -95,10 +97,6 @@ inferRuntimeEnvironment()
     renderAutorun(root);
 
   });
-
-const processControlEvent = (e: any) => {
-  console.log('### oncontrolevent ' + e.code);
-};
 
 const renderAutorun = (root: Root) => {
 

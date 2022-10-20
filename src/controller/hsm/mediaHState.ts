@@ -12,6 +12,7 @@ import {
   HsmMap,
   HsmType,
   HsmKeydownType,
+  HsmBpType,
 } from '../../type';
 import {
   AutorunDispatch,
@@ -32,6 +33,7 @@ import {
   dmFilterDmState,
   DmcTransition,
   DmSuperStateContentItem,
+  DmBpEventData,
   DmEventData,
   DmKeyboardEventData,
 } from '@brightsign/bsdatamodel';
@@ -47,7 +49,6 @@ import { isNil, isNumber, isString } from 'lodash';
 import {
   addHsmEvent,
 } from '../hsmController';
-import { match } from 'assert';
 
 export const mediaHStateEventHandler = (
   hState: HState,
@@ -144,21 +145,17 @@ const executeEventMatchAction = (
   return 'SUPER';
 };
 
-const eventDataMatches = (matchedEvent: DmcEvent, dispatchedEvent: HsmEventType): boolean => {
-  if (matchedEvent.type === dispatchedEvent.EventType) {
-
-  }
-  return false;
-};
-
 const getMatchedEvent = (mediaState: DmMediaState, dispatchedEvent: HsmEventType): DmcEvent | null => {
+
+  let mediaStateEventData: DmEventData | null = null;
+
   const mediaStateEvents: DmcEvent[] = (mediaState as DmcMediaState).eventList;
   for (const mediaStateEvent of mediaStateEvents) {
     if (mediaStateEvent.type === dispatchedEvent.EventType) {
       // TODO - general purpose way to do this?
       switch (mediaStateEvent.type) {
         case EventType.Keyboard:
-          const mediaStateEventData: DmEventData | null = mediaStateEvent.data;
+          mediaStateEventData = mediaStateEvent.data;
           if (isNil(mediaStateEventData)) {
             return null;
           }
@@ -169,9 +166,65 @@ const getMatchedEvent = (mediaState: DmMediaState, dispatchedEvent: HsmEventType
             return mediaStateEvent;
           }
           break;
+        case EventType.Bp:
+          mediaStateEventData = mediaStateEvent.data;
+          if (isNil(mediaStateEventData)) {
+            return null;
+          }
+          // if (isNil(dispatchedEvent.data) || !isString(dispatchedEvent.data)) {
+          //   return null;
+          // }
+          console.log('BP Event received');
+          console.log('dispatchedEvent.data');
+          console.log(dispatchedEvent.data);
+          console.log('bpEventData');
+          console.log((mediaStateEventData as DmBpEventData).bpType);
+          console.log((mediaStateEventData as DmBpEventData).bpIndex);
+          console.log((mediaStateEventData as DmBpEventData).buttonNumber);
+          console.log((mediaStateEventData as DmBpEventData).pressContinuous);
+
+          /*
+oncontroldown invoked: 0
+BP Event received
+dispatchedEvent.data
+0
+
+bpEventData
+bp900
+a
+0
+null
+
+BP Event received
+dispatchedEvent.data
+0
+
+bpEventData
+bp900
+a
+1
+null
+          */
+          console.log('(mediaStateEventData as DmBpEventData).buttonNumber.toString().length');
+          console.log((mediaStateEventData as DmBpEventData).buttonNumber.toString().length);
+          console.log('isString(dispatchedEvent.data)');
+          console.log(isString(dispatchedEvent.data));
+          if (isString(dispatchedEvent.data)) {
+            console.log('dispatchedEvent.data.length');
+            console.log(dispatchedEvent.data.length);
+          }
+          // if ((mediaStateEventData as DmBpEventData).buttonNumber.toString() === dispatchedEvent.data) {
+          //   return mediaStateEvent;
+          // }
+          if ((mediaStateEventData as DmBpEventData).buttonNumber === dispatchedEvent.data) {
+            return mediaStateEvent;
+          }
+          break;
         // TODO - is this correct for timer? what about multiple timers?
         // TODO - what about other EventType's?
         case EventType.Timer:
+          return mediaStateEvent;
+        case EventType.MediaEnd:
           return mediaStateEvent;
         default:
           break;
@@ -217,10 +270,10 @@ interface TimeoutEventCallbackParams {
   hState: HState;
 }
 
-interface KeydownEventCallbackParams {
-  dispatch: AutorunDispatch;
-  hState: HState;
-}
+// interface KeydownEventCallbackParams {
+//   dispatch: AutorunDispatch;
+//   hState: HState;
+// }
 
 export const launchTimer = (
   hState: HState,
@@ -286,6 +339,17 @@ export const keydownEventHandler = (keyName: string): any => {
       EventType: EventType.Keyboard,
       EventData: HsmKeydownType.MediaHState,
       data: keyName,
+    };
+    dispatch(addHsmEvent(event));
+  };
+};
+
+export const bpEventHandler = (code: string): any => {
+  return (dispatch: AutorunDispatch, getState: () => any) => {
+    const event: HsmEventType = {
+      EventType: EventType.Bp,
+      EventData: HsmKeydownType.MediaHState,
+      data: code,
     };
     dispatch(addHsmEvent(event));
   };
