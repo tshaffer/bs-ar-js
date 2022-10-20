@@ -45,6 +45,7 @@ if (target !== 'brightsign') {
   );
 } else {
   externals = {
+    BSControlPort: 'BSControlPort',
     BSDeviceInfo: 'BSDeviceInfo',
     '@brightsign/registry': 'commonjs @brightsign/registry',
     '@brightsign/systemtime': 'commonjs @brightsign/systemtime',
