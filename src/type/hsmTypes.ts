@@ -8,3 +8,8 @@ export class HsmTimerType {
   static MediaHState = 'MediaHState';
 }
 Object.freeze(HsmType);
+
+export class HsmKeydownType {
+  static MediaHState = 'MediaHState';
+}
+Object.freeze(HsmType);

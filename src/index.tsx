@@ -11,7 +11,10 @@ import { AutorunState, RuntimeEnvironment } from './type';
 import { bsDmReducer } from '@brightsign/bsdatamodel';
 import { baCmReducer } from '@brightsign/ba-context-model';
 
-import { inferRuntimeEnvironment } from './controller';
+import {
+  inferRuntimeEnvironment,
+  keydownEventHandler,
+} from './controller';
 import { isNil } from 'lodash';
 
 const reducers = combineReducers<AutorunState>({
@@ -60,7 +63,7 @@ inferRuntimeEnvironment()
         /*
           https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent
           https://felixgerschau.com/react-typescript-onkeydown-event-type/
-          
+
           interface KeyboardEvent<T = Element> extends SyntheticEvent<T, NativeKeyboardEvent> {
             altKey: boolean;
             ** @deprecated *
@@ -80,6 +83,8 @@ inferRuntimeEnvironment()
           }
         */
         console.log('keydown event: ', evnt);
+        const keyName: string = evnt.key;
+        store.dispatch(keydownEventHandler(keyName));
       }
       return;
     });

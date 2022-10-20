@@ -8,6 +8,9 @@ import {
   autorunStateFromState,
   MediaHState,
   HsmTimerType,
+  HsmMap,
+  HsmType,
+  HsmKeydownType,
 } from '../../type';
 import {
   AutorunDispatch,
@@ -34,7 +37,8 @@ import {
 } from '../../type';
 import { EventType, EventIntrinsicAction, ContentItemType } from '@brightsign/bscore';
 import {
-  getHsmById, getHStateById,
+  getActiveHStateIdByHsmId,
+  getHsmById, getHsmMap, getHStateById,
 } from '../../selector';
 import { isNil, isNumber } from 'lodash';
 import {
@@ -175,7 +179,7 @@ export const mediaHStateExitHandler = (
       if (!isNil(mediaHState.data.mediaStateData)) {
         if (isNumber(mediaHState.data.mediaStateData.timeoutId)) {
           clearTimeout(mediaHState.data.mediaStateData.timeoutId);
-          // TEDTODO - is it okay to dispatching an action inside of a whatever
+          // TEDTODO - is it okay to dispatch an action inside of a whatever
           dispatch(setMediaHStateTimeoutId(hStateId, 0));
         }
       }
@@ -184,6 +188,11 @@ export const mediaHStateExitHandler = (
 };
 
 interface TimeoutEventCallbackParams {
+  dispatch: AutorunDispatch;
+  hState: HState;
+}
+
+interface KeydownEventCallbackParams {
   dispatch: AutorunDispatch;
   hState: HState;
 }
@@ -212,7 +221,7 @@ export const launchTimer = (
             hState,
           };
           const timeoutId: number =
-            setTimeout(timeoutHandler, interval * 1000, timeoutEventCallbackParams) as unknown as number;
+            setTimeout(timeoutEventHandler, interval * 1000, timeoutEventCallbackParams) as unknown as number;
           dispatch(setMediaHStateTimeoutId(hState.id, timeoutId));
         }
       }
@@ -220,10 +229,39 @@ export const launchTimer = (
   };
 };
 
-const timeoutHandler = (callbackParams: TimeoutEventCallbackParams): void => {
+const timeoutEventHandler = (callbackParams: TimeoutEventCallbackParams): void => {
   const event: HsmEventType = {
     EventType: EventType.Timer,
     EventData: HsmTimerType.MediaHState,
   };
   callbackParams.dispatch(addHsmEvent(event));
+};
+
+export const keydownEventHandler = (keyName: string): any => {
+  return (dispatch: AutorunDispatch, getState: () => any) => {
+
+    // TEDTODO - get the current state - not sure what the actual right way to do this is.
+    // const autorunState = autorunStateFromState(getState());
+    // const hsmMap: HsmMap = getHsmMap(autorunState);
+    // for (const hsmId in hsmMap) {
+    //   if (Object.prototype.hasOwnProperty.call(hsmMap, hsmId)) {
+    //     const hsm: Hsm = hsmMap[hsmId];
+    //     // TEDTODO - total hack!!
+    //     if (hsm.type === HsmType.VideoOrImages) {
+    //       const activeHState: HState | null = getActiveHStateIdByHsmId(autorunState, hsm.id);
+    //       if (!isNil(activeHState)) {
+    //         console.log('activeHState: ', activeHState);
+    //       }
+    //     }
+    //   }
+    // }
+    // TEDTODO - doesn't look like the current state is used / needed???? It's retrieved elsewhere.
+    
+    const event: HsmEventType = {
+      EventType: EventType.Keyboard,
+      EventData: HsmKeydownType.MediaHState,
+      data: keyName,
+    };
+    dispatch(addHsmEvent(event));
+  };
 };
