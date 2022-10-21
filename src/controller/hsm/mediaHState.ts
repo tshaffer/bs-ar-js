@@ -267,11 +267,6 @@ interface TimeoutEventCallbackParams {
   hState: HState;
 }
 
-// interface KeydownEventCallbackParams {
-//   dispatch: AutorunDispatch;
-//   hState: HState;
-// }
-
 export const launchTimer = (
   hState: HState,
 ): AutorunVoidThunkAction => {
