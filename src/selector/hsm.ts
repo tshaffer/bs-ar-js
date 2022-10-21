@@ -8,9 +8,12 @@ import {
   ZoneHsmProperties,
   autorunStateFromState,
   MediaHState,
+  MrssStateData,
 } from '../type';
 import { find, isNil, isString } from 'lodash';
 import { HsmMap } from '../type';
+import { DmDerivedContentItem, dmFilterDmState, dmGetMediaStateById } from '@brightsign/bsdatamodel';
+import { ContentItemType } from '@brightsign/bscore';
 
 // ------------------------------------
 // Selectors
@@ -148,7 +151,27 @@ export function getActiveMediaStateId(state: any, zoneId: string): string {
   return '';
 }
 
-export function getEvents(state: any): HsmEventType[] {
+export function getActiveMrssDisplayIndex(state: any, zoneId: string): number {
+  // TEDTODO - the following is called here and in getActiveMediaStateId - fix this
+  const zoneHsm: Hsm | null = getZoneHsmFromZoneId(state, zoneId);
+  if (!isNil(zoneHsm)) {
+    const mediaStateId = getActiveMediaStateId(state, zoneId);
+    const mediaState = dmGetMediaStateById(dmFilterDmState(state), { id: mediaStateId });
+    if (!isNil(mediaState)) {
+      const contentItem: DmDerivedContentItem = mediaState.contentItem;
+      if (contentItem.type === ContentItemType.MrssFeed) {
+        const mrssState = getHStateByMediaStateId(state, zoneHsm.id, mediaStateId) as MediaHState;
+        if (!isNil(mrssState)) {
+          const mrssStateData: MrssStateData = mrssState.data.mediaStateData! as MrssStateData;
+          const displayIndex: number = mrssStateData.displayIndex;
+          return displayIndex;
+        }
+      }
+    }
+  }
+
+  return -1;
+}export function getEvents(state: any): HsmEventType[] {
   const autorunState: AutorunState = autorunStateFromState(state);
   return autorunState.bsPlayer.hsmState.hsmEventQueue;
 }

@@ -20,10 +20,11 @@ import {
 } from '@brightsign/bsdatamodel';
 
 import { autorunStateFromState, Dimensions } from '../type';
-import { getActiveMediaStateId } from '../selector';
+import { getActiveMediaStateId, getActiveMrssDisplayIndex } from '../selector';
 import { Image } from './image';
 import { Video } from './video';
 import { calculateAspectRatioFit } from '../utility';
+import { Mrss } from './mrssItem';
 
 // -----------------------------------------------------------------------
 // Types
@@ -39,6 +40,7 @@ export interface MediaZonePropsFromParent {
 
 export interface MediaZoneProps extends MediaZonePropsFromParent {
   mediaStateId: string;
+  mrssDisplayIndex: number;
 }
 
 // -----------------------------------------------------------------------
@@ -90,6 +92,28 @@ export default class MediaZoneComponent extends React.Component<MediaZoneProps> 
     return null;
   }
 
+  renderMrssDisplayItem(mediaState: DmMediaState,
+    contentItem: DmDerivedContentItem,
+    mrssDisplayIndex: number) {
+
+    const scaledDimensions = calculateAspectRatioFit(
+      this.props.zoneWidth,
+      this.props.zoneHeight,
+      this.props.screenDimensions.width,
+      this.props.screenDimensions.height,
+    );
+
+    return (
+      <Mrss
+        mediaStateId={mediaState.id}
+        assetName={mediaState.name}
+        zoneWidth={scaledDimensions.width}
+        zoneHeight={scaledDimensions.height}
+        screenDimensions={this.props.screenDimensions}
+      />
+    );
+  }
+
   getEvents(bsdm: DmState, mediaStateId: string): DmEvent[] {
 
     let events: DmEvent[] = [];
@@ -118,6 +142,12 @@ export default class MediaZoneComponent extends React.Component<MediaZoneProps> 
       case ContentItemType.Video: {
         return this.renderMediaItem(mediaState, contentItem as DmMediaContentItem);
       }
+      case ContentItemType.MrssFeed: {
+        return this.renderMrssDisplayItem(mediaState,
+          contentItem as DmMediaContentItem,
+          this.props.mrssDisplayIndex,
+        );
+      }
       default: {
         break;
       }
@@ -142,6 +172,7 @@ const mapStateToProps = (
     zoneWidth: ownProps.zoneWidth,
     zoneHeight: ownProps.zoneHeight,
     mediaStateId: getActiveMediaStateId(state, ownProps.zone.id),
+    mrssDisplayIndex: getActiveMrssDisplayIndex(state, ownProps.zone.id),
   };
 };
 

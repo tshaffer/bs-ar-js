@@ -11,6 +11,7 @@ import {
 import { hsmReducer } from './hsm';
 import { presentationDataReducer } from './presentation';
 import { playbackReducer } from './playback';
+import { dataFeedReducer, isValidDataFeedState } from './dataFeed';
 
 // -----------------------------------------------------------------------
 // Reducers
@@ -35,4 +36,5 @@ export const autorunReducer = enableBatching(combineReducers<AutorunPlayerState>
   hsmState: hsmReducer,
   playback: playbackReducer,
   presentationData: presentationDataReducer,
+  arDataFeeds: dataFeedReducer,
 }));

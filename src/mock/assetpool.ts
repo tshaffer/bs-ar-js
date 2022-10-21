@@ -15,7 +15,7 @@ export default class AssetPool {
     return Promise.resolve();
   }
 
-   unprotectAssets(name: string): Promise<void> {
+  unprotectAssets(name: string): Promise<void> {
     return Promise.resolve();
   }
 

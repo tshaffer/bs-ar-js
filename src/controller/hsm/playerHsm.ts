@@ -7,7 +7,7 @@ import { createHState, createHStateSpecification } from './hState';
 import {
   getHsmByName,
   getHStateByName,
-} from '../../selector/hsm';
+} from '../../selector';
 import {
   HState,
   HsmType,
@@ -20,7 +20,7 @@ import {
   AutorunAnyPromiseThunkAction,
 } from '../../model';
 import {
-  isNil,
+  isNil, isString,
 } from 'lodash';
 import { setHsmTop } from '../../model';
 
@@ -35,6 +35,7 @@ import {
 
 import {
   getZoneHsmList,
+  getDataFeedById,
 } from '../../selector';
 import {
   BsDmId,
@@ -42,12 +43,30 @@ import {
   dmGetZoneById,
   DmZone,
   dmGetZonesForSign,
+  dmFilterDmState,
 } from '@brightsign/bsdatamodel';
+import {
+  downloadMRSSFeedContent,
+  retrieveDataFeed,
+  readCachedFeed,
+  downloadContentFeedContent,
+  processFeed
+} from '../dataFeed';
+import { DataFeedUsageType } from '@brightsign/bscore';
+import { ArContentFeed, ArMrssFeed, ArDataFeed } from '../../type/dataFeed';
+
 import { hsmConstructorFunction } from '../hsm/eventHandler';
 import { createMediaZoneHsm } from './mediaZoneHsm';
 import { getIsHsmInitialized } from '../../selector';
 import { addHsmEvent } from '../hsmController';
 import { openSign } from '../appController';
+import {
+  DmDataFeedSource,
+  dmGetDataFeedIdsForSign,
+  DmcDataFeed,
+  dmGetDataFeedById,
+  dmGetDataFeedSourceForFeedId
+} from '@brightsign/bsdatamodel';
 
 export const createPlayerHsm = (): any => {
   return ((dispatch: AutorunDispatch, getState: () => AutorunState) => {
@@ -132,10 +151,19 @@ export const STPlayingEventHandler = (
   return ((dispatch: AutorunDispatch, getState: () => AutorunState) => {
     stateData.nextStateId = null;
     if (event.EventType && event.EventType === 'ENTRY_SIGNAL') {
-      const action: any = launchPresentationPlayback();
-      dispatch(action);
+      const readStoredFeedsAction: any = readCachedFeeds();
+      dispatch(readStoredFeedsAction)
+        .then(() => {
+          dispatch(fetchFeeds());
+          const action: any = launchPresentationPlayback();
+          dispatch(action);
+          return 'HANDLED';
+        });
+    } else if (isString(event.EventType) && (event.EventType === 'MRSS_DATA_FEED_LOADED') || (event.EventType === 'CONTENT_DATA_FEED_LOADED') || (event.EventType === 'CONTENT_DATA_FEED_UNCHANGED')) {
+      dispatch(advanceToNextDataFeedInQueue());
       return 'HANDLED';
     }
+
     stateData.nextStateId = hState.superStateId;
     return 'SUPER';
   });
@@ -207,3 +235,141 @@ export const launchPresentationPlayback = (): AutorunVoidThunkAction => {
 
   };
 };
+
+// ids of dataFeeds to download
+const bsdmDataFeedIdsToDownload: BsDmId[] = [];
+
+export const advanceToNextDataFeedInQueue = () => {
+  return (dispatch: any, getState: any) => {
+    bsdmDataFeedIdsToDownload.shift();
+
+    if (bsdmDataFeedIdsToDownload.length > 0) {
+      const bsdmDataFeedId = bsdmDataFeedIdsToDownload[0];
+      dispatch(retrieveAndProcessDataFeed(bsdmDataFeedId));
+    }
+  };
+};
+
+export const queueRetrieveDataFeed = (bsdmDataFeedId: BsDmId) => {
+  return (dispatch: any, getState: any) => {
+    const bsdm: DmState = dmFilterDmState(autorunStateFromState(getState()));
+    const bsdmDataFeed: DmcDataFeed | null = dmGetDataFeedById(bsdm, { id: bsdmDataFeedId }) as DmcDataFeed;
+    if (!isNil(bsdmDataFeed)) {
+      if (bsdmDataFeed.usage === DataFeedUsageType.Text) {
+        dispatch(retrieveAndProcessDataFeed(bsdmDataFeedId));
+      } else {
+        bsdmDataFeedIdsToDownload.push(bsdmDataFeedId);
+        if (bsdmDataFeedIdsToDownload.length === 1) {
+          dispatch(retrieveAndProcessDataFeed(bsdmDataFeedId));
+        }
+      }
+    }
+  };
+};
+
+interface DataFeedTimeoutEventCallbackParams {
+  dispatch: AutorunDispatch;
+  dataFeedId: string;
+}
+
+export const launchRetrieveFeedTimer = (dataFeedId: BsDmId): any => {
+  return (dispatch: any, getState: any) => {
+    const bsdm: DmState = dmFilterDmState(autorunStateFromState(getState()));
+    const dataFeedSource = dmGetDataFeedSourceForFeedId(bsdm, { id: dataFeedId }) as DmDataFeedSource;
+    let updateInterval = dataFeedSource.updateInterval;
+
+    // test
+    updateInterval = 60;
+
+    const dataFeedTimeoutEventCallbackParams: DataFeedTimeoutEventCallbackParams = {
+      dispatch,
+      dataFeedId,
+    };
+    setTimeout(retrieveFeedTimeoutHandler, updateInterval * 1000, dataFeedTimeoutEventCallbackParams);
+  };
+};
+
+const retrieveFeedTimeoutHandler = (callbackParams: DataFeedTimeoutEventCallbackParams): void => {
+  callbackParams.dispatch(queueRetrieveDataFeed(callbackParams.dataFeedId));
+};
+
+const readCachedFeeds = () => {
+
+  return (dispatch: any, getState: any) => {
+
+    const bsdm: DmState = dmFilterDmState(autorunStateFromState(getState()));
+
+    const bsdmDataFeedIds: BsDmId[] = dmGetDataFeedIdsForSign(bsdm);
+
+    const readNextCachedFeed = (index: number): Promise<void> => {
+
+      if (index >= bsdmDataFeedIds.length) {
+        return Promise.resolve();
+      }
+
+      const bsdmDataFeedId = bsdmDataFeedIds[index];
+      const bsdmDataFeed: DmcDataFeed | null = dmGetDataFeedById(bsdm, { id: bsdmDataFeedId }) as DmcDataFeed;
+      return (readCachedFeed(getState(), bsdmDataFeed))
+        .then((rawFeed: any) => {
+          if (!isNil(rawFeed)) {
+            // const promise = dispatch(processFeed(bsdmDataFeed, rawFeed));
+            dispatch(processFeed(bsdmDataFeed, rawFeed));
+            // TODO - wait for promise to get resolved before starting next one?
+          }
+          return readNextCachedFeed(index + 1);
+        }).catch((error: Error) => {
+          console.log(error);
+          debugger;
+        });
+    };
+
+    return readNextCachedFeed(0);
+  };
+};
+
+const fetchFeeds = () => {
+  return (dispatch: any, getState: any) => {
+    const bsdm: DmState = dmFilterDmState(autorunStateFromState(getState()));
+    const bsdmDataFeedIds: BsDmId[] = dmGetDataFeedIdsForSign(bsdm);
+    for (const bsdmDataFeedId of bsdmDataFeedIds) {
+      dispatch(queueRetrieveDataFeed(bsdmDataFeedId));
+    }
+  };
+};
+
+function retrieveAndProcessDataFeed(bsdmDataFeedId: BsDmId) {
+  return (dispatch: any, getState: any) => {
+    const bsdm: DmState = dmFilterDmState(autorunStateFromState(getState()));
+    const bsdmDataFeed: DmcDataFeed | null = dmGetDataFeedById(bsdm, { id: bsdmDataFeedId }) as DmcDataFeed;
+    // const feedFileName: string = getFeedCacheRoot() + bsdmDataFeed.id + '.xml';
+    retrieveDataFeed(getState(), bsdm, bsdmDataFeed)
+      .then((rawFeed) => {
+        dispatch(processFeed(bsdmDataFeed, rawFeed))
+          .then(() => {
+            // TYPESCRIPT issues
+            const arDataFeed = getDataFeedById(getState(), bsdmDataFeed.id) as ArDataFeed;
+            if (arDataFeed.type === 'content') {
+              dispatch(downloadContentFeedContent(arDataFeed as ArContentFeed));
+            } else if (arDataFeed.type === 'mrss') {
+              dispatch(downloadMRSSFeedContent(arDataFeed as ArMrssFeed));
+            } else if (arDataFeed.type === 'text') {
+              // console.log('text feed: return from processFeed - no content to download');
+            } else {
+              debugger;
+            }
+
+            const event: HsmEventType = {
+              EventType: 'LIVE_DATA_FEED_UPDATE',
+              EventData: bsdmDataFeedId,
+            };
+
+            dispatch(addHsmEvent(event));
+
+            dispatch(launchRetrieveFeedTimer(bsdmDataFeedId));
+
+          }).catch((err: any) => {
+            console.log(err);
+          });
+      });
+  };
+}

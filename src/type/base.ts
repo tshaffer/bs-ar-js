@@ -6,6 +6,7 @@ import { BaContextModelState } from '@brightsign/ba-context-model';
 import { HsmState } from './hsm';
 import { PresentationDataState } from './presentation';
 import { PlaybackState } from './playback';
+import { ArDataFeedMap } from './dataFeed';
 
 export class RuntimeEnvironment {
   static BrightSign = 'BrightSign';
@@ -24,6 +25,7 @@ export interface AutorunPlayerState {
   hsmState: HsmState;
   presentationData: PresentationDataState;
   playback: PlaybackState;
+  arDataFeeds: ArDataFeedMap;
 }
 
 /** @internal */
@@ -59,7 +61,8 @@ export const autorunStateFromState = (state: any): AutorunState => {
         playback: autorunPlayerState.playback,
         presentationData: autorunPlayerState.presentationData,
         hsmState: autorunPlayerState.hsmState,
-      }
+        arDataFeeds: autorunPlayerState.arDataFeeds,
+      },
     };
     return autorunState;
   } else if (Object.prototype.hasOwnProperty.call(state, 'bsPlayer')) {

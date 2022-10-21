@@ -42,7 +42,8 @@
     "redux": "^4.2.0",
     "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.4.1",
-    "superagent": "^6.1.0"
+    "superagent": "^6.1.0",
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "@babel/core": "7.12.3",
@@ -56,6 +57,7 @@
     "@types/react-redux": "^7.1.24",
     "@types/superagent": "^4.1.11",
     "@types/uuid": "^8.3.1",
+    "@types/xml2js": "^0.4.5",
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",
     "case-sensitive-paths-webpack-plugin": "2.3.0",
