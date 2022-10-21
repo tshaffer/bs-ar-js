@@ -22,6 +22,7 @@ if (target !== 'brightsign') {
       resource.request = resource.request.replace(/^@brightsign\/assetpool$/, path.resolve(paths.appBrightSignMock, 'assetpool'));
       resource.request = resource.request.replace(/^@brightsign\/assetpoolfetcher$/, path.resolve(paths.appBrightSignMock, 'assetpoolfetcher'));
       resource.request = resource.request.replace(/^@brightsign\/assetrealizer$/, path.resolve(paths.appBrightSignMock, 'assetrealizer'));
+      resource.request = resource.request.replace(/^@brightsign\/bscontrolport$/, path.resolve(paths.appBrightSignMock, 'bscontrolport'));
       resource.request = resource.request.replace(/^@brightsign\/compositor$/, path.resolve(paths.appBrightSignMock, 'compositor'));
       resource.request = resource.request.replace(/^@brightsign\/decoderconfiguration$/, path.resolve(paths.appBrightSignMock, 'decoderconfiguration'));
       resource.request = resource.request.replace(/^@brightsign\/dwsconfiguration$/, path.resolve(paths.appBrightSignMock, 'dwsconfiguration'));
@@ -45,7 +46,8 @@ if (target !== 'brightsign') {
   );
 } else {
   externals = {
-    BSControlPort: 'BSControlPort',
+    /* BSControlPort: 'BSControlPort', */
+    '@brightsign/bscontrolport': 'BSControlPort',
     BSDeviceInfo: 'BSDeviceInfo',
     '@brightsign/registry': 'commonjs @brightsign/registry',
     '@brightsign/systemtime': 'commonjs @brightsign/systemtime',

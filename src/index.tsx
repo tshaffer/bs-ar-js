@@ -11,6 +11,8 @@ import { AutorunState, RuntimeEnvironment } from './type';
 import { bsDmReducer } from '@brightsign/bsdatamodel';
 import { baCmReducer } from '@brightsign/ba-context-model';
 
+import BSControlPort from '@brightsign/bscontrolport';
+
 import {
   bpEventHandler,
   inferRuntimeEnvironment,
@@ -44,12 +46,12 @@ inferRuntimeEnvironment()
       // TODO - support more than just BP900A. Different string for constructor; pass different values to bpEventHandler
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       // const BSControlPort = require('BSControlPort');
-      // const bp900_gpio = new BSControlPort('TouchBoard-0-GPIO');
-      // bp900_gpio.oncontroldown = (e: any) => {
-      //   console.log('oncontroldown invoked: ' + e.code);
-      //   store.dispatch(bpEventHandler(e.code));
-      //   return;
-      // };
+      const bp900_gpio = new BSControlPort('TouchBoard-0-GPIO');
+      bp900_gpio.oncontroldown = (e: any) => {
+        console.log('oncontroldown invoked: ' + e.code);
+        store.dispatch(bpEventHandler(e.code));
+        return;
+      };
     }
 
     document.addEventListener('click', function (evnt) {
