@@ -44,11 +44,26 @@ export interface AutorunMap<T extends AutorunBaseObject> {
 
 export interface FileLUT { [fileName: string]: string; }
 
+export interface Position {
+  left: number;
+  top: number;
+}
+
 export interface Dimensions {
   width: number;
   height: number;
 }
 
+export interface CanvasRenderProperties {
+  sx: number;
+  sy: number;
+  sWidth: number;
+  sHeight: number;
+  dx: number;
+  dy: number;
+  dWidth: number;
+  dHeight: number;
+}
 export const autorunStateFromState = (state: any): AutorunState => {
   if (Object.prototype.hasOwnProperty.call(state, 'autorun')) {
     const autorunPlayerState: AutorunPlayerState = (state as any).bsPlayer;
