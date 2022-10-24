@@ -68,8 +68,8 @@ export default class MediaZoneComponent extends React.Component<MediaZoneProps> 
         return (
           <Image
             assetName={mediaState.name}
-            zoneWidth={scaledDimensions.width}
-            zoneHeight={scaledDimensions.height}
+            zoneWidth={this.props.zoneWidth}
+            zoneHeight={this.props.zoneHeight}
             screenDimensions={this.props.screenDimensions}
           />
         );

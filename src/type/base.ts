@@ -44,9 +44,34 @@ export interface AutorunMap<T extends AutorunBaseObject> {
 
 export interface FileLUT { [fileName: string]: string; }
 
+export interface Position {
+  left: number;
+  top: number;
+}
+
 export interface Dimensions {
   width: number;
   height: number;
+}
+
+export interface Inset {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+}
+
+export interface Rectangle {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface ImageRenderProperties {
+  position: Position;
+  dimensions: Dimensions;
+  inset: Inset;
 }
 
 export const autorunStateFromState = (state: any): AutorunState => {
