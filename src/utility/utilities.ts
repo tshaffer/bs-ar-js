@@ -43,31 +43,6 @@ export const getImageRenderProperties = (
   }
 };
 
-const getCenterImageRectangle = (
-  zoneDimensions: Dimensions,
-  imageDimensions: Dimensions): Rectangle => {
-
-  if ((imageDimensions.width > zoneDimensions.width) || (imageDimensions.height > zoneDimensions.height)) {
-    // image size is larger than zone size
-    return {
-      x: 0,
-      y: 0,
-      width: zoneDimensions.width,
-      height: zoneDimensions.height,
-    };
-  } else {
-    // image size is smaller than zone size
-    const x = (zoneDimensions.width - imageDimensions.width) / 2;
-    const y = (zoneDimensions.height - imageDimensions.height) / 2;
-    return {
-      x,
-      y,
-      width: imageDimensions.width,
-      height: imageDimensions.height,
-    };
-  }
-};
-
 const getCenterImageRenderProperties = (
   zoneDimensions: Dimensions,
   imageDimensions: Dimensions): ImageRenderProperties => {
@@ -135,14 +110,6 @@ const getCenterImageRenderProperties = (
       }
     };
     return imageRenderProperties;
-    // const x = (zoneDimensions.width - imageDimensions.width) / 2;
-    // const y = (zoneDimensions.height - imageDimensions.height) / 2;
-    // return {
-    //   x,
-    //   y,
-    //   width: imageDimensions.width,
-    //   height: imageDimensions.height,
-    // };
   }
 };
 

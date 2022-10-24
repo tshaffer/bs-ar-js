@@ -51,35 +51,6 @@ export class ImageComponent extends React.Component<ImageProps> {
       },
     );
 
-    // const scaledDimensions = calculateAspectRatioFit(
-    //   dimensions.width,
-    //   dimensions.height,
-    //   this.props.zoneWidth,
-    //   this.props.zoneHeight);
-
-    // const left = (this.props.screenDimensions.width - scaledDimensions.width) / 2;
-    // const top = (this.props.screenDimensions.height - scaledDimensions.height) / 2;
-
-    /*
-      The inset CSS property is a shorthand that corresponds to the top, right, bottom, and/or left properties. It has the same multi-value syntax of the margin shorthand.
-      inset: 10px 30% 20px 0;    
-    */
-    
-    // return (
-    //   <img
-    //     style={{
-    //       position: 'absolute',
-    //       left: '-140px',
-    //       top: '-84px',
-    //       clipPath: 'inset(84px 140px 84px 140px)',
-    //     }}
-    //     src={src}
-    //     width={'1000px'}
-    //     height={'600px'}
-    //     alt=''
-    //   />
-    // );
-
     const { top, right, bottom, left } = imageRenderProperties.inset;
     let clipPath: string = 'inset(' + top.toString() + 'px ';
     clipPath = clipPath + right.toString() + 'px ';
