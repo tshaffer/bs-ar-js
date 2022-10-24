@@ -18,6 +18,7 @@ export interface ImagePropsFromParent {
   zoneWidth: number;
   zoneHeight: number;
   screenDimensions: Dimensions;
+  imageMode: ImageModeType;
 }
 
 export interface ImageProps extends ImagePropsFromParent {
@@ -40,7 +41,7 @@ export class ImageComponent extends React.Component<ImageProps> {
     }
 
     const imageRenderProperties: ImageRenderProperties = getImageRenderProperties(
-      ImageModeType.CenterImage,
+      this.props.imageMode,
       {
         width: this.props.zoneWidth,
         height: this.props.zoneHeight,
@@ -82,9 +83,6 @@ const mapStateToProps = (state: AutorunState, ownProps: ImagePropsFromParent): P
   state = autorunStateFromState(state);
   return {
     filePath: getAssetPath(state, ownProps.assetName),
-    zoneWidth: ownProps.zoneWidth,
-    zoneHeight: ownProps.zoneHeight,
-    assetName: ownProps.assetName,
   };
 };
 

@@ -29,12 +29,12 @@ export const getImageRenderProperties = (
   imageDimensions: Dimensions): ImageRenderProperties => {
 
   switch (imageModeType) {
-    // case ImageModeType.CenterImage:
-    //   return getCenterImageRectangle(zoneDimensions, imageDimensions);
+    case ImageModeType.CenterImage:
+      return getCenterImageRenderProperties(zoneDimensions, imageDimensions);
     // case ImageModeType.ScaleToFit:
     //   return getScaleToFitImageRectangle(zoneDimensions, imageDimensions);
-    // case ImageModeType.ScaleToFill:
-    //   return getScaleToFillImageRectangle(zoneDimensions, imageDimensions);
+    case ImageModeType.ScaleToFill:
+      return getScaleToFillRenderProperties(zoneDimensions);
     // case ImageModeType.FillAndCrop:
     // default:
     //   return getScaleToFillAndCropImageRectangle(zoneDimensions, imageDimensions);
@@ -72,7 +72,7 @@ const getCenterImageRenderProperties = (
     const insetRight = widthOverflow / 4;
     const insetBottom = insetTop;
     const insetLeft = insetRight;
-    
+
     const imageRenderProperties: ImageRenderProperties = {
       position: {
         left,
@@ -111,6 +111,28 @@ const getCenterImageRenderProperties = (
     };
     return imageRenderProperties;
   }
+};
+
+const getScaleToFillRenderProperties = (
+  zoneDimensions: Dimensions): ImageRenderProperties => {
+
+  const imageRenderProperties: ImageRenderProperties = {
+    position: {
+      left: 0,
+      top: 0,
+    },
+    dimensions: {
+      width: zoneDimensions.width,
+      height: zoneDimensions.height,
+    },
+    inset: {
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+    }
+  };
+  return imageRenderProperties;
 };
 
 
