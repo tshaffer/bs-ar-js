@@ -31,15 +31,13 @@ export const getImageRenderProperties = (
   switch (imageModeType) {
     case ImageModeType.CenterImage:
       return getCenterImageRenderProperties(zoneDimensions, imageDimensions);
-    // case ImageModeType.ScaleToFit:
-    //   return getScaleToFitImageRectangle(zoneDimensions, imageDimensions);
+    case ImageModeType.ScaleToFit:
+      return getScaleToFitRenderProperties(zoneDimensions, imageDimensions);
     case ImageModeType.ScaleToFill:
       return getScaleToFillRenderProperties(zoneDimensions);
-    // case ImageModeType.FillAndCrop:
-    // default:
-    //   return getScaleToFillAndCropImageRectangle(zoneDimensions, imageDimensions);
+    case ImageModeType.FillAndCrop:
     default:
-      return getCenterImageRenderProperties(zoneDimensions, imageDimensions);
+      return getScaleToFillAndCropRenderProperties(zoneDimensions, imageDimensions);
   }
 };
 
@@ -136,15 +134,49 @@ const getScaleToFillRenderProperties = (
 };
 
 
-const getScaleToFitImageRectangle = (
+/*
+  Scale to Fit: 
+    Scales the image to fit the zone. 
+    The image is displayed as large as possible while keeping the correct aspect ratio
+*/
+const getScaleToFitRenderProperties = (
   zoneDimensions: Dimensions,
-  imageDimensions: Dimensions): Rectangle => {
-  return {
-    x: 0,
-    y: 0,
-    width: zoneDimensions.width,
-    height: zoneDimensions.height,
+  imageDimensions: Dimensions): ImageRenderProperties => {
+
+  const xScale = imageDimensions.width / zoneDimensions.width;
+  const yScale = imageDimensions.height / zoneDimensions.height;
+
+  let x, y, width, height: number;
+
+  if (xScale > yScale) {
+    x = 0;
+    y = (zoneDimensions.height - (imageDimensions.height / xScale)) / 2;
+    width = imageDimensions.width / xScale;
+    height = imageDimensions.height / xScale;
+  } else {
+    x = (zoneDimensions.width - (imageDimensions.width / yScale)) / 2;
+    y = 0;
+    width = imageDimensions.width / yScale;
+    height = imageDimensions.height / yScale;
+  }
+
+  const imageRenderProperties: ImageRenderProperties = {
+    position: {
+      left: x,
+      top: y,
+    },
+    dimensions: {
+      width,
+      height,
+    },
+    inset: {
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+    }
   };
+  return imageRenderProperties;
 };
 
 const getScaleToFillImageRectangle = (
@@ -158,13 +190,28 @@ const getScaleToFillImageRectangle = (
   };
 };
 
-const getScaleToFillAndCropImageRectangle = (
+/*
+  Scale to Fill and Crop: 
+    Scales the image to completely fill the zone while maintaining the aspect ratio.
+*/
+const getScaleToFillAndCropRenderProperties = (
   zoneDimensions: Dimensions,
-  imageDimensions: Dimensions): Rectangle => {
-  return {
-    x: 0,
-    y: 0,
-    width: zoneDimensions.width,
-    height: zoneDimensions.height,
+  imageDimensions: Dimensions): ImageRenderProperties => {
+  const imageRenderProperties: ImageRenderProperties = {
+    position: {
+      left: 0,
+      top: 0,
+    },
+    dimensions: {
+      width: zoneDimensions.width,
+      height: zoneDimensions.height,
+    },
+    inset: {
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+    }
   };
+  return imageRenderProperties;
 };
