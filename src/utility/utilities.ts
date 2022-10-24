@@ -6,6 +6,7 @@ import {
 } from '../type';
 
 import { ImageModeType } from '@brightsign/bscore';
+import _ from 'lodash';
 
 export const newAutorunId = () => v4();
 
@@ -41,6 +42,10 @@ export const getImageRenderProperties = (
   }
 };
 
+/*
+  Center Image: 
+    Centers the image without scaling. This may result in cropping if the image is too large.
+*/
 const getCenterImageRenderProperties = (
   zoneDimensions: Dimensions,
   imageDimensions: Dimensions): ImageRenderProperties => {
@@ -111,6 +116,10 @@ const getCenterImageRenderProperties = (
   }
 };
 
+/*
+  Scale to Fill:
+    Scales the image to fill the zone without maintaining the aspect ratio.
+*/
 const getScaleToFillRenderProperties = (
   zoneDimensions: Dimensions): ImageRenderProperties => {
 
@@ -132,7 +141,6 @@ const getScaleToFillRenderProperties = (
   };
   return imageRenderProperties;
 };
-
 
 /*
   Scale to Fit: 
@@ -179,17 +187,6 @@ const getScaleToFitRenderProperties = (
   return imageRenderProperties;
 };
 
-const getScaleToFillImageRectangle = (
-  zoneDimensions: Dimensions,
-  imageDimensions: Dimensions): Rectangle => {
-  return {
-    x: 0,
-    y: 0,
-    width: zoneDimensions.width,
-    height: zoneDimensions.height,
-  };
-};
-
 /*
   Scale to Fill and Crop: 
     Scales the image to completely fill the zone while maintaining the aspect ratio.
@@ -197,21 +194,76 @@ const getScaleToFillImageRectangle = (
 const getScaleToFillAndCropRenderProperties = (
   zoneDimensions: Dimensions,
   imageDimensions: Dimensions): ImageRenderProperties => {
+
+  const xScale = imageDimensions.width / zoneDimensions.width;
+  const yScale = imageDimensions.height / zoneDimensions.height;
+
+  let x, y, width, height: number;
+
+  if (xScale < yScale) {
+    x = 0;
+    y = (zoneDimensions.height - (imageDimensions.height / xScale)) / 2;
+    width = imageDimensions.width / xScale;
+    height = imageDimensions.height / xScale;
+  } else {
+    x = (zoneDimensions.width - (imageDimensions.width / yScale)) / 2;
+    y = 0;
+    width = imageDimensions.width / yScale;
+    height = imageDimensions.height / yScale;
+  }
+
+  let left: number;
+  let top: number;
+
+  let widthOverflow = width - zoneDimensions.width;
+  if (widthOverflow < 0) {
+    widthOverflow = 0;
+    left = (zoneDimensions.width - imageDimensions.width) / 2;
+  } else {
+    left = -(widthOverflow / 4);
+  }
+
+  let heightOverflow = height - zoneDimensions.height;
+  if (heightOverflow < 0) {
+    heightOverflow = 0;
+    top = (zoneDimensions.height - imageDimensions.height) / 2;
+  } else {
+    top = -(heightOverflow / 4);
+  }
+
+  const insetTop = heightOverflow / 4;
+  const insetRight = widthOverflow / 4;
+  const insetBottom = insetTop;
+  const insetLeft = insetRight;
+
   const imageRenderProperties: ImageRenderProperties = {
     position: {
-      left: 0,
-      top: 0,
+      left,
+      top,
     },
     dimensions: {
-      width: zoneDimensions.width,
-      height: zoneDimensions.height,
+      width: zoneDimensions.width - left,
+      height: zoneDimensions.height - top,
     },
     inset: {
-      top: 0,
-      right: 0,
-      bottom: 0,
-      left: 0,
+      top: insetTop,
+      right: insetRight,
+      bottom: insetBottom,
+      left: insetLeft,
     }
   };
+  console.log('zoneDimensions: ', zoneDimensions);
+  console.log('imageDimensions: ', imageDimensions);
+  console.log('xScale: ', xScale);
+  console.log('yScale: ', yScale);
+  console.log('x: ', x);
+  console.log('y: ', y);
+  console.log('widthOverflow: ', widthOverflow);
+  console.log('heightOverflow: ', heightOverflow);
+  console.log('width: ', width);
+  console.log('height: ', height);
+  
+  console.log(imageRenderProperties);
   return imageRenderProperties;
+
 };
