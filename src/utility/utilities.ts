@@ -82,7 +82,7 @@ const getCenterImageRenderProperties = (
       widthOverflow = 0;
       left = (zoneDimensions.width - imageDimensions.width) / 2;
     } else {
-      left = -(widthOverflow / 2);
+      left = -(widthOverflow / 4);
     }
 
     let heightOverflow = imageDimensions.height - zoneDimensions.height;
@@ -90,11 +90,11 @@ const getCenterImageRenderProperties = (
       heightOverflow = 0;
       top = (zoneDimensions.height - imageDimensions.height) / 2;
     } else {
-      top = -(heightOverflow / 2);
+      top = -(heightOverflow / 4);
     }
 
-    const insetTop = heightOverflow / 2;
-    const insetRight = widthOverflow / 2;
+    const insetTop = heightOverflow / 4;
+    const insetRight = widthOverflow / 4;
     const insetBottom = insetTop;
     const insetLeft = insetRight;
     

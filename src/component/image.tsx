@@ -92,7 +92,7 @@ export class ImageComponent extends React.Component<ImageProps> {
           position: 'absolute',
           left: imageRenderProperties.position.left.toString() + 'px',
           top: imageRenderProperties.position.top.toString() + 'px',
-          // clipPath,
+          clipPath,
         }}
         src={src}
         width={imageRenderProperties.dimensions.width.toString() + 'px'}
