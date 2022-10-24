@@ -103,10 +103,9 @@ const getCenterImageRenderProperties = (
         left,
         top,
       },
-      // TODO - are the dimensions accurate if only one dimension of the image is larger than the zone?
       dimensions: {
-        width: zoneDimensions.width,
-        height: zoneDimensions.height,
+        width: zoneDimensions.width - left,
+        height: zoneDimensions.height - top,
       },
       inset: {
         top: insetTop,
