@@ -103,7 +103,7 @@ const getCenterImageRenderProperties = (
       },
       dimensions: {
         width: imageDimensions.width,
-        height: imageDimensions.width,
+        height: imageDimensions.height,
       },
       inset: {
         top: 0,
