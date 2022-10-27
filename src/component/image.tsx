@@ -48,27 +48,14 @@ export class ImageComponent extends React.Component<ImageProps> {
     }
   }
 
-  alreadyLoaded(img: HTMLImageElement) {
-    console.log('alreadyLoaded() invoked');
+  renderImg(img: HTMLImageElement) {
     const imageBitmapPromise: Promise<ImageBitmap> = createImageBitmap(img);
     imageBitmapPromise.then((imageBitmap: ImageBitmap) => {
-      console.log('alreadyLoaded: createImageBitmap success: ');
+      console.log('renderImg: createImageBitmap success: ');
       console.log(imageBitmap);
       this.ctx.drawImage(imageBitmap, 0, 0);
     }).catch((reason: any) => {
-      console.log('alreadyLoaded: createImageBitmap failed: ', reason);
-    });
-  }
-
-  loadedWithThis(self: ImageComponent, img: HTMLImageElement) {
-    console.log('alreadyLoaded() invoked');
-    const imageBitmapPromise: Promise<ImageBitmap> = createImageBitmap(img);
-    imageBitmapPromise.then((imageBitmap: ImageBitmap) => {
-      console.log('alreadyLoaded: createImageBitmap success: ');
-      console.log(imageBitmap);
-      self.ctx.drawImage(imageBitmap, 0, 0);
-    }).catch((reason: any) => {
-      console.log('alreadyLoaded: createImageBitmap failed: ', reason);
+      console.log('renderImg: createImageBitmap failed: ', reason);
     });
   }
 
@@ -84,17 +71,17 @@ export class ImageComponent extends React.Component<ImageProps> {
 
       if (img.complete) {
         console.log('image already loaded');
-        this.alreadyLoaded(img);
+        this.renderImg(img);
       } else {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
-        const loadedWithThis = this.loadedWithThis;
-        img.addEventListener('load', function() { loadedWithThis(self, img); });
-        // img.addEventListener('load', this.loaded);
+        img.addEventListener('load', function() { self.renderImg(img); });
         img.addEventListener('error', function () {
           alert('error');
         });
       }
+    } else {
+      console.log('render: canvas ref not set yet');
     }
 
     const dimensions = sizeOf(this.props.filePath as string);
