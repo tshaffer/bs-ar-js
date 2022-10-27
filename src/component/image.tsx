@@ -32,6 +32,7 @@ export interface ImageProps extends ImagePropsFromParent {
 export class ImageComponent extends React.Component<ImageProps> {
 
   canvas: React.RefObject<HTMLCanvasElement>;
+  ctx: CanvasRenderingContext2D;
   img: HTMLImageElement;
 
   constructor(props: ImageProps) {
@@ -40,10 +41,12 @@ export class ImageComponent extends React.Component<ImageProps> {
   }
 
   componentDidMount() {
+    console.log('componentDidMount invoked');
     if (!isNil(this.canvas) && !isNil(this.canvas.current)) {
-      const ctx = (this.canvas.current as any).getContext('2d');
-      ctx.fillStyle = 'green';
-      ctx.fillRect(10, 10, 100, 100);
+      console.log('get ctx');
+      this.ctx = (this.canvas.current as any).getContext('2d');
+      this.ctx.fillStyle = 'green';
+      this.ctx.fillRect(10, 10, 100, 100);
     }
   }
 
@@ -55,6 +58,18 @@ export class ImageComponent extends React.Component<ImageProps> {
       console.log(imageBitmap);
     }).catch((reason: any) => {
       console.log('createImageBitmap failed: ', reason);
+    });
+  }
+
+  alreadyLoaded(img: HTMLImageElement) {
+    console.log('alreadyLoaded() invoked');
+    const imageBitmapPromise: Promise<ImageBitmap> = createImageBitmap(img);
+    imageBitmapPromise.then((imageBitmap: ImageBitmap) => {
+      console.log('alreadyLoaded: createImageBitmap success: ');
+      console.log(imageBitmap);
+      this.ctx.drawImage(imageBitmap, 0, 0);
+    }).catch((reason: any) => {
+      console.log('alreadyLoaded: createImageBitmap failed: ', reason);
     });
   }
   
@@ -70,7 +85,7 @@ export class ImageComponent extends React.Component<ImageProps> {
 
       if (img.complete) {
         console.log('image already loaded');
-        this.loaded();
+        this.alreadyLoaded(img);
       } else {
         img.addEventListener('load', this.loaded);
         img.addEventListener('error', function () {
