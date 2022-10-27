@@ -32,6 +32,7 @@ export interface ImageProps extends ImagePropsFromParent {
 export class ImageComponent extends React.Component<ImageProps> {
 
   canvas: React.RefObject<HTMLCanvasElement>;
+  img: HTMLImageElement;
 
   constructor(props: ImageProps) {
     super(props);
@@ -46,11 +47,39 @@ export class ImageComponent extends React.Component<ImageProps> {
     }
   }
 
+  loaded() {
+    console.log('loaded() invoked');
+    const imageBitmapPromise: Promise<ImageBitmap> = createImageBitmap(this as unknown as HTMLImageElement);
+    imageBitmapPromise.then((imageBitmap: ImageBitmap) => {
+      console.log('createImageBitmap success: ');
+      console.log(imageBitmap);
+    }).catch((reason: any) => {
+      console.log('createImageBitmap failed: ', reason);
+    });
+  }
+  
   render() {
 
     const src: string = isomorphicPath.join('file://', this.props.filePath);
 
-    const dimensions = sizeOf(this.props.filePath);
+    if (!isNil(this.canvas) && !isNil(this.canvas.current)) {
+      console.log('render: canvas ref is good!');
+
+      const img: HTMLImageElement = document.createElement('img');
+      img.src = src;
+
+      if (img.complete) {
+        console.log('image already loaded');
+        this.loaded();
+      } else {
+        img.addEventListener('load', this.loaded);
+        img.addEventListener('error', function () {
+          alert('error');
+        });
+      }
+    }
+
+    const dimensions = sizeOf(this.props.filePath as string);
     if (isNil(dimensions)) {
       return null;
     }
@@ -113,7 +142,7 @@ export class ImageComponent extends React.Component<ImageProps> {
 // Container
 // -----------------------------------------------------------------------
 
-const mapStateToProps = (state: AutorunState, ownProps: ImagePropsFromParent): Partial<ImageProps> => {
+const mapStateToProps = (state: AutorunState, ownProps: ImagePropsFromParent): any => {
   state = autorunStateFromState(state);
   return {
     filePath: getAssetPath(state, ownProps.assetName) as string,
