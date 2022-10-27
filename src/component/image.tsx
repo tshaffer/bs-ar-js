@@ -45,20 +45,7 @@ export class ImageComponent extends React.Component<ImageProps> {
     if (!isNil(this.canvas) && !isNil(this.canvas.current)) {
       console.log('get ctx');
       this.ctx = (this.canvas.current as any).getContext('2d');
-      this.ctx.fillStyle = 'green';
-      this.ctx.fillRect(10, 10, 100, 100);
     }
-  }
-
-  loaded() {
-    console.log('loaded() invoked');
-    const imageBitmapPromise: Promise<ImageBitmap> = createImageBitmap(this as unknown as HTMLImageElement);
-    imageBitmapPromise.then((imageBitmap: ImageBitmap) => {
-      console.log('createImageBitmap success: ');
-      console.log(imageBitmap);
-    }).catch((reason: any) => {
-      console.log('createImageBitmap failed: ', reason);
-    });
   }
 
   alreadyLoaded(img: HTMLImageElement) {
@@ -72,7 +59,19 @@ export class ImageComponent extends React.Component<ImageProps> {
       console.log('alreadyLoaded: createImageBitmap failed: ', reason);
     });
   }
-  
+
+  loadedWithThis(self: ImageComponent, img: HTMLImageElement) {
+    console.log('alreadyLoaded() invoked');
+    const imageBitmapPromise: Promise<ImageBitmap> = createImageBitmap(img);
+    imageBitmapPromise.then((imageBitmap: ImageBitmap) => {
+      console.log('alreadyLoaded: createImageBitmap success: ');
+      console.log(imageBitmap);
+      self.ctx.drawImage(imageBitmap, 0, 0);
+    }).catch((reason: any) => {
+      console.log('alreadyLoaded: createImageBitmap failed: ', reason);
+    });
+  }
+
   render() {
 
     const src: string = isomorphicPath.join('file://', this.props.filePath);
@@ -87,7 +86,11 @@ export class ImageComponent extends React.Component<ImageProps> {
         console.log('image already loaded');
         this.alreadyLoaded(img);
       } else {
-        img.addEventListener('load', this.loaded);
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+        const loadedWithThis = this.loadedWithThis;
+        img.addEventListener('load', function() { loadedWithThis(self, img); });
+        // img.addEventListener('load', this.loaded);
         img.addEventListener('error', function () {
           alert('error');
         });
