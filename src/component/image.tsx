@@ -51,8 +51,33 @@ export class ImageComponent extends React.Component<ImageProps> {
   renderImg(img: HTMLImageElement) {
     const imageBitmapPromise: Promise<ImageBitmap> = createImageBitmap(img);
     imageBitmapPromise.then((imageBitmap: ImageBitmap) => {
+
       console.log('renderImg: createImageBitmap success: ');
       console.log(imageBitmap);
+
+      const dimensions = sizeOf(this.props.filePath as string);
+      if (isNil(dimensions)) {
+        return null;
+      }
+
+      const imageRenderProperties: ImageRenderProperties = getImageRenderProperties(
+        this.props.imageMode,
+        {
+          width: this.props.zoneWidth,
+          height: this.props.zoneHeight,
+        },
+        {
+          width: dimensions.width,
+          height: dimensions.height,
+        },
+      );
+  
+      const { top, right, bottom, left } = imageRenderProperties.inset;
+      let clipPath: string = 'inset(' + top.toString() + 'px ';
+      clipPath = clipPath + right.toString() + 'px ';
+      clipPath = clipPath + bottom.toString() + 'px ';
+      clipPath = clipPath + left.toString() + 'px)';
+  
       this.ctx.drawImage(imageBitmap, 0, 0);
     }).catch((reason: any) => {
       console.log('renderImg: createImageBitmap failed: ', reason);
@@ -133,8 +158,8 @@ export class ImageComponent extends React.Component<ImageProps> {
       <div>
         <canvas
           ref={this.canvas}
-          width="300"
-          height="300"
+          width={imageRenderProperties.dimensions.width.toString() + 'px'}
+          height={imageRenderProperties.dimensions.height.toString() + 'px'}
         >
         </canvas>
       </div>
