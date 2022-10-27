@@ -31,6 +31,21 @@ export interface ImageProps extends ImagePropsFromParent {
 
 export class ImageComponent extends React.Component<ImageProps> {
 
+  canvas: React.RefObject<HTMLCanvasElement>;
+
+  constructor(props: ImageProps) {
+    super(props);
+    this.canvas = React.createRef();
+  }
+
+  componentDidMount() {
+    if (!isNil(this.canvas) && !isNil(this.canvas.current)) {
+      const ctx = (this.canvas.current as any).getContext('2d');
+      ctx.fillStyle = 'green';
+      ctx.fillRect(10, 10, 100, 100);
+    }
+  }
+
   render() {
 
     const src: string = isomorphicPath.join('file://', this.props.filePath);
@@ -57,7 +72,8 @@ export class ImageComponent extends React.Component<ImageProps> {
     clipPath = clipPath + right.toString() + 'px ';
     clipPath = clipPath + bottom.toString() + 'px ';
     clipPath = clipPath + left.toString() + 'px)';
-    
+
+    /*
     return (
       <img
         style={{
@@ -72,6 +88,24 @@ export class ImageComponent extends React.Component<ImageProps> {
         alt=''
       />
     );
+    */
+
+    // const canvas = document.querySelector('canvas');
+    // const ctx = canvas.getContext('2d');
+    // ctx.fillStyle = 'green';
+    // ctx.fillRect(10, 10, 100, 100);
+
+    return (
+      <div>
+        <canvas
+          ref={this.canvas}
+          width="300"
+          height="300"
+        >
+        </canvas>
+      </div>
+    )
+
   }
 }
 
@@ -82,7 +116,7 @@ export class ImageComponent extends React.Component<ImageProps> {
 const mapStateToProps = (state: AutorunState, ownProps: ImagePropsFromParent): Partial<ImageProps> => {
   state = autorunStateFromState(state);
   return {
-    filePath: getAssetPath(state, ownProps.assetName),
+    filePath: getAssetPath(state, ownProps.assetName) as string,
   };
 };
 
