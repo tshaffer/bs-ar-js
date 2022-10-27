@@ -88,13 +88,14 @@ export class ImageComponent extends React.Component<ImageProps> {
       // const dWidth = dimensions.width;
       // const dHeight = dimensions.height;
 
-      let imageModeType: ImageModeType;
       // eslint-disable-next-line prefer-const
       // imageModeType = ImageModeType.CenterImage;
       // eslint-disable-next-line prefer-const
-      imageModeType = ImageModeType.CenterImage;
+      // imageModeType = ImageModeType.CenterImage;
+      const imageModeType = ImageModeType.ScaleToFit;
 
       switch (imageModeType) {
+
         // case ImageModeType.ScaleToFit:
         //   const sx = 0;
         //   const sy = 0;
@@ -107,46 +108,97 @@ export class ImageComponent extends React.Component<ImageProps> {
 
         //   this.ctx.drawImage(imageBitmap, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
         //   return;
-        case ImageModeType.CenterImage:
 
-          let sx = 0;
-          let sWidth = 0;
-          let dx = 0;
-          let dWidth = 0;
+        /*
+          Center Image: 
+            Centers the image without scaling. This may result in cropping if the image is too large.
+        */
+        // case ImageModeType.CenterImage:
 
-          let sy = 0;
-          let sHeight = 0;
-          let dy = 0;
-          let dHeight = 0;
+        //   let sx = 0;
+        //   let sWidth = 0;
+        //   let dx = 0;
+        //   let dWidth = 0;
 
-          const imageWidthOverflow = imageDimensions.width - this.props.zoneWidth;
-          if (imageWidthOverflow > 0) {
-            // will zoom in on image - show the center of the image
-            sx = imageWidthOverflow / 2;
-            sWidth = this.props.zoneWidth;
-            dx = 0;
-            dWidth = this.props.zoneWidth;
+        //   let sy = 0;
+        //   let sHeight = 0;
+        //   let dy = 0;
+        //   let dHeight = 0;
+
+        //   const imageWidthOverflow = imageDimensions.width - this.props.zoneWidth;
+        //   if (imageWidthOverflow > 0) {
+        //     // will zoom in on image - show the center of the image
+        //     sx = imageWidthOverflow / 2;
+        //     sWidth = this.props.zoneWidth;
+        //     dx = 0;
+        //     dWidth = this.props.zoneWidth;
+        //   } else {
+        //     // will display entire image, centered within the zone
+        //     sx = 0;
+        //     sWidth = imageDimensions.width;
+        //     dx = (this.props.zoneWidth - imageDimensions.width) / 2;
+        //     dWidth = imageDimensions.width;
+        //   }
+        //   const imageHeightOverflow = imageDimensions.height - this.props.zoneHeight;
+        //   if (imageHeightOverflow > 0) {
+        //     // will zoom in on image - show the center of the image
+        //     sy = imageHeightOverflow / 2;
+        //     sHeight = this.props.zoneHeight;
+        //     dy = 0;
+        //     dHeight = this.props.zoneHeight;
+        //   } else {
+        //     // will display entire image, centered within the zone
+        //     sy = 0;
+        //     sHeight = imageDimensions.height;
+        //     dy = (this.props.zoneHeight - imageDimensions.height) / 2;
+        //     dHeight = imageDimensions.height;
+        //   }
+        //   this.ctx.drawImage(imageBitmap, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+        //   return;
+
+        /*
+          Scale to Fit: 
+            Scales the image to fit the zone. 
+            The image is displayed as large as possible while keeping the correct aspect ratio
+            NO CROPPING
+        */
+        case ImageModeType.ScaleToFit:
+
+          const xScale = imageDimensions.width / this.props.zoneWidth;
+          const yScale = imageDimensions.height / this.props.zoneHeight;
+        
+          let x, y, width, height: number;
+        
+          if (xScale > yScale) {
+
+            // example data
+            //    zoneWidth = 400
+            //    zoneHeight = 300
+            //    imageWidth = 1600
+            //    imageHeight = 600
+            //    xScale = 4
+            //    yScale = 2
+
+            x = 0;
+            y = (this.props.zoneHeight - (imageDimensions.height / xScale)) / 2;
+            width = imageDimensions.width / xScale;
+            height = imageDimensions.height / xScale;
           } else {
-            // will display entire image, centered within the zone
-            sx = 0;
-            sWidth = imageDimensions.width;
-            dx = (this.props.zoneWidth - imageDimensions.width) / 2;
-            dWidth = imageDimensions.width;
+            x = (this.props.zoneWidth - (imageDimensions.width / yScale)) / 2;
+            y = 0;
+            width = imageDimensions.width / yScale;
+            height = imageDimensions.height / yScale;
           }
-          const imageHeightOverflow = imageDimensions.height - this.props.zoneHeight;
-          if (imageHeightOverflow > 0) {
-            // will zoom in on image - show the center of the image
-            sy = imageHeightOverflow / 2;
-            sHeight = this.props.zoneHeight;
-            dy = 0;
-            dHeight = this.props.zoneHeight;
-          } else {
-            // will display entire image, centered within the zone
-            sy = 0;
-            sHeight = imageDimensions.height;
-            dy = (this.props.zoneHeight - imageDimensions.height) / 2;
-            dHeight = imageDimensions.height;
-          }
+        
+          const sx = 0;
+          const sy = 0;
+          const sWidth = imageDimensions.width;
+          const sHeight = imageDimensions.height;
+          const dx = x;
+          const dy = y;
+          const dWidth = width;
+          const dHeight = height;
+
           this.ctx.drawImage(imageBitmap, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
           return;
 
@@ -154,7 +206,11 @@ export class ImageComponent extends React.Component<ImageProps> {
           break;
       }
 
-      // /* scale to fit */
+      /*
+        Scale to Fill:
+          Scales the image to fill the zone without maintaining the aspect ratio.
+      */
+      // /* scale to fill */
       // const sx = 0;
       // const sy = 0;
       // const sWidth = imageDimensions.width;
@@ -165,6 +221,7 @@ export class ImageComponent extends React.Component<ImageProps> {
       // const dHeight = this.props.zoneHeight;
 
       // this.ctx.drawImage(imageBitmap, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+
     }).catch((reason: any) => {
       console.log('renderImg: createImageBitmap failed: ', reason);
     });
