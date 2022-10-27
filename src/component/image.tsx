@@ -71,14 +71,23 @@ export class ImageComponent extends React.Component<ImageProps> {
           height: dimensions.height,
         },
       );
-  
+
       const { top, right, bottom, left } = imageRenderProperties.inset;
       let clipPath: string = 'inset(' + top.toString() + 'px ';
       clipPath = clipPath + right.toString() + 'px ';
       clipPath = clipPath + bottom.toString() + 'px ';
       clipPath = clipPath + left.toString() + 'px)';
-  
-      this.ctx.drawImage(imageBitmap, 0, 0);
+
+      const sx = 0;
+      const sy = 0;
+      const sWidth = dimensions.width;
+      const sHeight = dimensions.height;
+      const dx = 0;
+      const dy = 0;
+      const dWidth = dimensions.width;
+      const dHeight = dimensions.height;
+
+      this.ctx.drawImage(imageBitmap, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
     }).catch((reason: any) => {
       console.log('renderImg: createImageBitmap failed: ', reason);
     });
@@ -100,7 +109,7 @@ export class ImageComponent extends React.Component<ImageProps> {
       } else {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
-        img.addEventListener('load', function() { self.renderImg(img); });
+        img.addEventListener('load', function () { self.renderImg(img); });
         img.addEventListener('error', function () {
           alert('error');
         });
@@ -149,17 +158,16 @@ export class ImageComponent extends React.Component<ImageProps> {
     );
     */
 
-    // const canvas = document.querySelector('canvas');
-    // const ctx = canvas.getContext('2d');
-    // ctx.fillStyle = 'green';
-    // ctx.fillRect(10, 10, 100, 100);
-
+    /*
+          width={imageRenderProperties.dimensions.width.toString() + 'px'}
+          height={imageRenderProperties.dimensions.height.toString() + 'px'}
+    */
     return (
       <div>
         <canvas
           ref={this.canvas}
-          width={imageRenderProperties.dimensions.width.toString() + 'px'}
-          height={imageRenderProperties.dimensions.height.toString() + 'px'}
+          width={this.props.zoneWidth.toString() + 'px'}
+          height={this.props.zoneHeight.toString() + 'px'}
         >
         </canvas>
       </div>
