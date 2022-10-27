@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import * as React from 'react';
 import { isNil } from 'lodash';
 import isomorphicPath from 'isomorphic-path';
@@ -55,8 +56,8 @@ export class ImageComponent extends React.Component<ImageProps> {
       console.log('renderImg: createImageBitmap success: ');
       console.log(imageBitmap);
 
-      const dimensions = sizeOf(this.props.filePath as string);
-      if (isNil(dimensions)) {
+      const imageDimensions = sizeOf(this.props.filePath as string);
+      if (isNil(imageDimensions)) {
         return null;
       }
 
@@ -67,8 +68,8 @@ export class ImageComponent extends React.Component<ImageProps> {
           height: this.props.zoneHeight,
         },
         {
-          width: dimensions.width,
-          height: dimensions.height,
+          width: imageDimensions.width,
+          height: imageDimensions.height,
         },
       );
 
@@ -78,16 +79,92 @@ export class ImageComponent extends React.Component<ImageProps> {
       clipPath = clipPath + bottom.toString() + 'px ';
       clipPath = clipPath + left.toString() + 'px)';
 
-      const sx = 0;
-      const sy = 0;
-      const sWidth = dimensions.width;
-      const sHeight = dimensions.height;
-      const dx = 0;
-      const dy = 0;
-      const dWidth = dimensions.width;
-      const dHeight = dimensions.height;
+      // const sx = 0;
+      // const sy = 0;
+      // const sWidth = dimensions.width;
+      // const sHeight = dimensions.height;
+      // const dx = 0;
+      // const dy = 0;
+      // const dWidth = dimensions.width;
+      // const dHeight = dimensions.height;
 
-      this.ctx.drawImage(imageBitmap, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+      let imageModeType: ImageModeType;
+      // eslint-disable-next-line prefer-const
+      // imageModeType = ImageModeType.CenterImage;
+      // eslint-disable-next-line prefer-const
+      imageModeType = ImageModeType.CenterImage;
+
+      switch (imageModeType) {
+        // case ImageModeType.ScaleToFit:
+        //   const sx = 0;
+        //   const sy = 0;
+        //   const sWidth = imageDimensions.width;
+        //   const sHeight = imageDimensions.height;
+        //   const dx = 0;
+        //   const dy = 0;
+        //   const dWidth = this.props.zoneWidth;
+        //   const dHeight = this.props.zoneHeight;
+
+        //   this.ctx.drawImage(imageBitmap, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+        //   return;
+        case ImageModeType.CenterImage:
+
+          let sx = 0;
+          let sWidth = 0;
+          let dx = 0;
+          let dWidth = 0;
+
+          let sy = 0;
+          let sHeight = 0;
+          let dy = 0;
+          let dHeight = 0;
+
+          const imageWidthOverflow = imageDimensions.width - this.props.zoneWidth;
+          if (imageWidthOverflow > 0) {
+            // will zoom in on image - show the center of the image
+            sx = imageWidthOverflow / 2;
+            sWidth = this.props.zoneWidth;
+            dx = 0;
+            dWidth = this.props.zoneWidth;
+          } else {
+            // will display entire image, centered within the zone
+            sx = 0;
+            sWidth = imageDimensions.width;
+            dx = (this.props.zoneWidth - imageDimensions.width) / 2;
+            dWidth = imageDimensions.width;
+          }
+          const imageHeightOverflow = imageDimensions.height - this.props.zoneHeight;
+          if (imageHeightOverflow > 0) {
+            // will zoom in on image - show the center of the image
+            sy = imageHeightOverflow / 2;
+            sHeight = this.props.zoneHeight;
+            dy = 0;
+            dHeight = this.props.zoneHeight;
+          } else {
+            // will display entire image, centered within the zone
+            sy = 0;
+            sHeight = imageDimensions.height;
+            dy = (this.props.zoneHeight - imageDimensions.height) / 2;
+            dHeight = imageDimensions.height;
+          }
+          this.ctx.drawImage(imageBitmap, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+          return;
+
+        default:
+          break;
+      }
+
+      // /* scale to fit */
+      // const sx = 0;
+      // const sy = 0;
+      // const sWidth = imageDimensions.width;
+      // const sHeight = imageDimensions.height;
+      // const dx = 0;
+      // const dy = 0;
+      // const dWidth = this.props.zoneWidth;
+      // const dHeight = this.props.zoneHeight;
+
+      // this.ctx.drawImage(imageBitmap, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
     }).catch((reason: any) => {
       console.log('renderImg: createImageBitmap failed: ', reason);
     });
