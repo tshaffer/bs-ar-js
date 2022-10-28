@@ -37,42 +37,40 @@ export interface AutorunProps {
 // Component
 // -----------------------------------------------------------------------
 
-class AutorunComponent extends React.Component<any> {
-  componentDidMount() {
-    this.props.onInitPresentation();
+const Autorun = (props: any) => {
+
+  React.useEffect(() => {
+    props.onInitPresentation();
+  }, []);
+
+  let initializationComplete = true;
+
+  if (props.bsdm.zones.allZones.length === 0 ||
+    Object.keys(props.hsmMap).length === 0) {
+    initializationComplete = false;
   }
 
-  render() {
-
-    let initializationComplete = true;
-
-    if (this.props.bsdm.zones.allZones.length === 0 ||
-      Object.keys(this.props.hsmMap).length === 0) {
-      initializationComplete = false;
-    }
-
-    for (const hsmId in this.props.hsmMap) {
-      if (Object.prototype.hasOwnProperty.call(this.props.hsmMap, hsmId)) {
-        const hsm = this.props.hsmMap[hsmId];
-        if (!hsm.initialized) {
-          initializationComplete = false;
-        }
+  for (const hsmId in props.hsmMap) {
+    if (Object.prototype.hasOwnProperty.call(props.hsmMap, hsmId)) {
+      const hsm = props.hsmMap[hsmId];
+      if (!hsm.initialized) {
+        initializationComplete = false;
       }
     }
-
-    if (initializationComplete) {
-      return (
-        <Sign />
-      );
-    } else {
-      return (
-        <div>
-          Waiting for the presentation to be loaded...
-        </div>
-      );
-    }
   }
-}
+
+  if (initializationComplete) {
+    return (
+      <Sign />
+    );
+  } else {
+    return (
+      <div>
+        Waiting for the presentation to be loaded...
+      </div>
+    );
+  }
+};
 
 // -----------------------------------------------------------------------
 // Container
@@ -94,4 +92,4 @@ const mapDispatchToProps = (dispatch: Dispatch<any>): any => {
   }, dispatch);
 };
 
-export const Autorun = connect(mapStateToProps, mapDispatchToProps)(AutorunComponent);
+export default connect(mapStateToProps, mapDispatchToProps)(Autorun);
