@@ -46,6 +46,7 @@ export class ImageComponent extends React.Component<any> {
     if (!isNil(this.canvas) && !isNil(this.canvas.current)) {
       console.log('get ctx');
       this.ctx = (this.canvas.current as any).getContext('2d');
+      this.forceUpdate();
     }
   }
 
