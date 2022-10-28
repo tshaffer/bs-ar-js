@@ -54,26 +54,16 @@ export interface Dimensions {
   height: number;
 }
 
-export interface Inset {
-  top: number;
-  right: number;
-  bottom: number;
-  left: number;
+export interface CanvasRenderProperties {
+  sx: number;
+  sy: number;
+  sWidth: number;
+  sHeight: number;
+  dx: number;
+  dy: number;
+  dWidth: number;
+  dHeight: number;
 }
-
-export interface Rectangle {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
-export interface ImageRenderProperties {
-  position: Position;
-  dimensions: Dimensions;
-  inset: Inset;
-}
-
 export const autorunStateFromState = (state: any): AutorunState => {
   if (Object.prototype.hasOwnProperty.call(state, 'autorun')) {
     const autorunPlayerState: AutorunPlayerState = (state as any).bsPlayer;

@@ -1,12 +1,10 @@
 import { v4 } from 'uuid';
 import {
+  CanvasRenderProperties,
   Dimensions,
-  ImageRenderProperties,
-  Rectangle,
 } from '../type';
 
 import { ImageModeType } from '@brightsign/bscore';
-import _ from 'lodash';
 
 export const newAutorunId = () => v4();
 
@@ -27,7 +25,7 @@ export const calculateAspectRatioFit = (
 export const getImageRenderProperties = (
   imageModeType: ImageModeType,
   zoneDimensions: Dimensions,
-  imageDimensions: Dimensions): ImageRenderProperties => {
+  imageDimensions: Dimensions): CanvasRenderProperties => {
 
   switch (imageModeType) {
     case ImageModeType.CenterImage:
@@ -35,7 +33,7 @@ export const getImageRenderProperties = (
     case ImageModeType.ScaleToFit:
       return getScaleToFitRenderProperties(zoneDimensions, imageDimensions);
     case ImageModeType.ScaleToFill:
-      return getScaleToFillRenderProperties(zoneDimensions);
+      return getScaleToFillRenderProperties(zoneDimensions, imageDimensions);
     case ImageModeType.FillAndCrop:
     default:
       return getScaleToFillAndCropRenderProperties(zoneDimensions, imageDimensions);
@@ -48,72 +46,61 @@ export const getImageRenderProperties = (
 */
 const getCenterImageRenderProperties = (
   zoneDimensions: Dimensions,
-  imageDimensions: Dimensions): ImageRenderProperties => {
+  imageDimensions: Dimensions): CanvasRenderProperties => {
 
-  if ((imageDimensions.width > zoneDimensions.width) || (imageDimensions.height > zoneDimensions.height)) {
+  // TEMPORARY
+  const canvasRenderProperties: CanvasRenderProperties = {
+    sx: 0,
+    sy: 0,
+    sWidth: imageDimensions.width,
+    sHeight: imageDimensions.height,
+    dx: 0,
+    dy: 0,
+    dWidth: zoneDimensions.width,
+    dHeight: zoneDimensions.height,
+  };
+  return canvasRenderProperties;
 
-    let left: number;
-    let top: number;
+  //   let sx = 0;
+  //   let sWidth = 0;
+  //   let dx = 0;
+  //   let dWidth = 0;
 
-    let widthOverflow = imageDimensions.width - zoneDimensions.width;
-    if (widthOverflow < 0) {
-      widthOverflow = 0;
-      left = (zoneDimensions.width - imageDimensions.width) / 2;
-    } else {
-      left = -(widthOverflow / 4);
-    }
+  //   let sy = 0;
+  //   let sHeight = 0;
+  //   let dy = 0;
+  //   let dHeight = 0;
 
-    let heightOverflow = imageDimensions.height - zoneDimensions.height;
-    if (heightOverflow < 0) {
-      heightOverflow = 0;
-      top = (zoneDimensions.height - imageDimensions.height) / 2;
-    } else {
-      top = -(heightOverflow / 4);
-    }
+  //   const imageWidthOverflow = imageDimensions.width - this.props.zoneWidth;
+  //   if (imageWidthOverflow > 0) {
+  //     // will zoom in on image - show the center of the image
+  //     sx = imageWidthOverflow / 2;
+  //     sWidth = this.props.zoneWidth;
+  //     dx = 0;
+  //     dWidth = this.props.zoneWidth;
+  //   } else {
+  //     // will display entire image, centered within the zone
+  //     sx = 0;
+  //     sWidth = imageDimensions.width;
+  //     dx = (this.props.zoneWidth - imageDimensions.width) / 2;
+  //     dWidth = imageDimensions.width;
+  //   }
+  //   const imageHeightOverflow = imageDimensions.height - this.props.zoneHeight;
+  //   if (imageHeightOverflow > 0) {
+  //     // will zoom in on image - show the center of the image
+  //     sy = imageHeightOverflow / 2;
+  //     sHeight = this.props.zoneHeight;
+  //     dy = 0;
+  //     dHeight = this.props.zoneHeight;
+  //   } else {
+  //     // will display entire image, centered within the zone
+  //     sy = 0;
+  //     sHeight = imageDimensions.height;
+  //     dy = (this.props.zoneHeight - imageDimensions.height) / 2;
+  //     dHeight = imageDimensions.height;
+  //   }
 
-    const insetTop = heightOverflow / 4;
-    const insetRight = widthOverflow / 4;
-    const insetBottom = insetTop;
-    const insetLeft = insetRight;
 
-    const imageRenderProperties: ImageRenderProperties = {
-      position: {
-        left,
-        top,
-      },
-      dimensions: {
-        width: zoneDimensions.width - left,
-        height: zoneDimensions.height - top,
-      },
-      inset: {
-        top: insetTop,
-        right: insetRight,
-        bottom: insetBottom,
-        left: insetLeft,
-      }
-    };
-    return imageRenderProperties;
-
-  } else {
-    // image size is smaller than zone size
-    const imageRenderProperties: ImageRenderProperties = {
-      position: {
-        left: (zoneDimensions.width - imageDimensions.width) / 2,
-        top: (zoneDimensions.height - imageDimensions.height) / 2,
-      },
-      dimensions: {
-        width: imageDimensions.width,
-        height: imageDimensions.height,
-      },
-      inset: {
-        top: 0,
-        right: 0,
-        bottom: 0,
-        left: 0,
-      }
-    };
-    return imageRenderProperties;
-  }
 };
 
 /*
@@ -121,25 +108,21 @@ const getCenterImageRenderProperties = (
     Scales the image to fill the zone without maintaining the aspect ratio.
 */
 const getScaleToFillRenderProperties = (
-  zoneDimensions: Dimensions): ImageRenderProperties => {
+  imageDimensions: Dimensions,
+  zoneDimensions: Dimensions
+): CanvasRenderProperties => {
 
-  const imageRenderProperties: ImageRenderProperties = {
-    position: {
-      left: 0,
-      top: 0,
-    },
-    dimensions: {
-      width: zoneDimensions.width,
-      height: zoneDimensions.height,
-    },
-    inset: {
-      top: 0,
-      right: 0,
-      bottom: 0,
-      left: 0,
-    }
+  const canvasRenderProperties: CanvasRenderProperties = {
+    sx: 0,
+    sy: 0,
+    sWidth: imageDimensions.width,
+    sHeight: imageDimensions.height,
+    dx: 0,
+    dy: 0,
+    dWidth: zoneDimensions.width,
+    dHeight: zoneDimensions.height,
   };
-  return imageRenderProperties;
+  return canvasRenderProperties;
 };
 
 /*
@@ -149,42 +132,65 @@ const getScaleToFillRenderProperties = (
 */
 const getScaleToFitRenderProperties = (
   zoneDimensions: Dimensions,
-  imageDimensions: Dimensions): ImageRenderProperties => {
+  imageDimensions: Dimensions): CanvasRenderProperties => {
 
-  const xScale = imageDimensions.width / zoneDimensions.width;
-  const yScale = imageDimensions.height / zoneDimensions.height;
-
-  let x, y, width, height: number;
-
-  if (xScale > yScale) {
-    x = 0;
-    y = (zoneDimensions.height - (imageDimensions.height / xScale)) / 2;
-    width = imageDimensions.width / xScale;
-    height = imageDimensions.height / xScale;
-  } else {
-    x = (zoneDimensions.width - (imageDimensions.width / yScale)) / 2;
-    y = 0;
-    width = imageDimensions.width / yScale;
-    height = imageDimensions.height / yScale;
-  }
-
-  const imageRenderProperties: ImageRenderProperties = {
-    position: {
-      left: x,
-      top: y,
-    },
-    dimensions: {
-      width,
-      height,
-    },
-    inset: {
-      top: 0,
-      right: 0,
-      bottom: 0,
-      left: 0,
-    }
+  // TEMPORARY
+  const canvasRenderProperties: CanvasRenderProperties = {
+    sx: 0,
+    sy: 0,
+    sWidth: imageDimensions.width,
+    sHeight: imageDimensions.height,
+    dx: 0,
+    dy: 0,
+    dWidth: zoneDimensions.width,
+    dHeight: zoneDimensions.height,
   };
-  return imageRenderProperties;
+  return canvasRenderProperties;
+
+  //   const xScale = imageDimensions.width / this.props.zoneWidth;
+  //   const yScale = imageDimensions.height / this.props.zoneHeight;
+
+  //   let x, y, width, height: number;
+
+  //   if (xScale > yScale) {
+
+  //     // example data for the case where the image is larger than the zone
+  //     //    zoneWidth = 400
+  //     //    zoneHeight = 300
+  //     //    imageWidth = 1600
+  //     //    imageHeight = 600
+  //     //    xScale = 4
+  //     //    yScale = 2
+
+  //     x = 0;
+  //     y = (this.props.zoneHeight - (imageDimensions.height / xScale)) / 2;
+  //     width = imageDimensions.width / xScale;
+  //     height = imageDimensions.height / xScale;
+  //   } else {
+  //     // example data for the case where the zone is larger than the image
+  //     //    imageWidth = 400
+  //     //    imageHeight = 300
+  //     //    zoneWidth = 1600
+  //     //    zoneHeight = 600
+  //     //    xScale = .25
+  //     //    yScale = .5
+
+
+  //     x = (this.props.zoneWidth - (imageDimensions.width / yScale)) / 2; // 400
+  //     y = 0;
+  //     width = imageDimensions.width / yScale; // 800
+  //     height = imageDimensions.height / yScale; // 600
+  //   }
+
+  //   const sx = 0;
+  //   const sy = 0;
+  //   const sWidth = imageDimensions.width;
+  //   const sHeight = imageDimensions.height;
+  //   const dx = x;
+  //   const dy = y;
+  //   const dWidth = width;
+  //   const dHeight = height;
+
 };
 
 /*
@@ -193,77 +199,35 @@ const getScaleToFitRenderProperties = (
 */
 const getScaleToFillAndCropRenderProperties = (
   zoneDimensions: Dimensions,
-  imageDimensions: Dimensions): ImageRenderProperties => {
+  imageDimensions: Dimensions): CanvasRenderProperties => {
 
-  const xScale = imageDimensions.width / zoneDimensions.width;
-  const yScale = imageDimensions.height / zoneDimensions.height;
+  const zoneAspectRatio = zoneDimensions.width / zoneDimensions.height;
+  const imageAspectRatio = imageDimensions.width / imageDimensions.height;
 
-  let x, y, width, height: number;
+  let sourceX, sourceY, sourceWidth, sourceHeight: number;
 
-  if (xScale < yScale) {
-    x = 0;
-    y = (zoneDimensions.height - (imageDimensions.height / xScale)) / 2;
-    width = imageDimensions.width / xScale;
-    height = imageDimensions.height / xScale;
+  if (imageAspectRatio > zoneAspectRatio) {
+    sourceWidth = imageDimensions.height * zoneDimensions.width / zoneDimensions.height;
+    sourceHeight = imageDimensions.height;
+    sourceX = (imageDimensions.width - sourceWidth) / 2;
+    sourceY = 0;
   } else {
-    x = (zoneDimensions.width - (imageDimensions.width / yScale)) / 2;
-    y = 0;
-    width = imageDimensions.width / yScale;
-    height = imageDimensions.height / yScale;
+    sourceWidth = imageDimensions.width;
+    sourceHeight = imageDimensions.width * zoneDimensions.height / zoneDimensions.width;
+    sourceX = 0;
+    sourceY = (imageDimensions.height - sourceHeight) / 2;
   }
 
-  let left: number;
-  let top: number;
-
-  let widthOverflow = width - zoneDimensions.width;
-  if (widthOverflow < 0) {
-    widthOverflow = 0;
-    left = (zoneDimensions.width - imageDimensions.width) / 2;
-  } else {
-    left = -(widthOverflow / 4);
-  }
-
-  let heightOverflow = height - zoneDimensions.height;
-  if (heightOverflow < 0) {
-    heightOverflow = 0;
-    top = (zoneDimensions.height - imageDimensions.height) / 2;
-  } else {
-    top = -(heightOverflow / 4);
-  }
-
-  const insetTop = heightOverflow / 4;
-  const insetRight = widthOverflow / 4;
-  const insetBottom = insetTop;
-  const insetLeft = insetRight;
-
-  const imageRenderProperties: ImageRenderProperties = {
-    position: {
-      left,
-      top,
-    },
-    dimensions: {
-      width: zoneDimensions.width - left,
-      height: zoneDimensions.height - top,
-    },
-    inset: {
-      top: insetTop,
-      right: insetRight,
-      bottom: insetBottom,
-      left: insetLeft,
-    }
+  const canvasRenderProperties: CanvasRenderProperties = {
+    sx: sourceX,
+    sy: sourceY,
+    sWidth: sourceWidth,
+    sHeight: sourceHeight,
+    dx: 0,
+    dy: 0,
+    dWidth: zoneDimensions.width,
+    dHeight: zoneDimensions.height,
   };
-  console.log('zoneDimensions: ', zoneDimensions);
-  console.log('imageDimensions: ', imageDimensions);
-  console.log('xScale: ', xScale);
-  console.log('yScale: ', yScale);
-  console.log('x: ', x);
-  console.log('y: ', y);
-  console.log('widthOverflow: ', widthOverflow);
-  console.log('heightOverflow: ', heightOverflow);
-  console.log('width: ', width);
-  console.log('height: ', height);
-  
-  console.log(imageRenderProperties);
-  return imageRenderProperties;
 
+  return canvasRenderProperties;
 };
