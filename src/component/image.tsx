@@ -30,7 +30,7 @@ export interface ImageProps extends ImagePropsFromParent {
 // Component
 // -----------------------------------------------------------------------
 
-export class ImageComponent extends React.Component<ImageProps> {
+export class ImageComponent extends React.Component<any> {
 
   canvas: React.RefObject<HTMLCanvasElement>;
   ctx: CanvasRenderingContext2D;
