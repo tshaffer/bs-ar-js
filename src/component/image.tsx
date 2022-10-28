@@ -114,23 +114,6 @@ export class ImageComponent extends React.Component<ImageProps> {
       return null;
     }
 
-    /*
-    return (
-      <img
-        style={{
-          position: 'absolute',
-          left: imageRenderProperties.position.left.toString() + 'px',
-          top: imageRenderProperties.position.top.toString() + 'px',
-          clipPath,
-        }}
-        src={src}
-        width={imageRenderProperties.dimensions.width.toString() + 'px'}
-        height={imageRenderProperties.dimensions.height.toString() + 'px'}
-        alt=''
-      />
-    );
-    */
-
     return (
       <div>
         <canvas
@@ -140,8 +123,7 @@ export class ImageComponent extends React.Component<ImageProps> {
         >
         </canvas>
       </div>
-    )
-
+    );
   }
 }
 
