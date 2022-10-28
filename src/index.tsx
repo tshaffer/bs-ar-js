@@ -5,7 +5,7 @@ import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { autorunReducer, updateRuntimeEnvironment } from './model';
-import { Autorun } from './component';
+import Autorun from './component/Autorun';
 import { AutorunState, RuntimeEnvironment } from './type';
 
 import { bsDmReducer } from '@brightsign/bsdatamodel';

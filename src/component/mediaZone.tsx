@@ -21,7 +21,7 @@ import {
 
 import { autorunStateFromState, Dimensions } from '../type';
 import { getActiveMediaStateId } from '../selector';
-import { Image } from './image';
+import Image from './image';
 import { Video } from './video';
 import { calculateAspectRatioFit } from '../utility';
 
