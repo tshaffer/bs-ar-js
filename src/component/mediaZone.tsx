@@ -21,8 +21,8 @@ import {
 
 import { autorunStateFromState, Dimensions } from '../type';
 import { getActiveMediaStateId } from '../selector';
-import { Image } from './image';
-import { Video } from './video';
+import Image from './image';
+import Video from './video';
 import { calculateAspectRatioFit } from '../utility';
 
 // -----------------------------------------------------------------------
@@ -46,19 +46,19 @@ export interface MediaZoneProps extends MediaZonePropsFromParent {
 // -----------------------------------------------------------------------
 // Component
 // -----------------------------------------------------------------------
-export default class MediaZoneComponent extends React.Component<MediaZoneProps> {
+const MediaZoneComponent = (props: any) => {
 
-  renderMediaItem(mediaState: DmMediaState, contentItem: DmDerivedContentItem) {
+  const renderMediaItem = (mediaState: DmMediaState, contentItem: DmDerivedContentItem) => {
 
     const mediaContentItem: DmMediaContentItem = contentItem as DmMediaContentItem;
 
     const mediaType: ContentItemType = mediaContentItem.type;
 
     const scaledDimensions = calculateAspectRatioFit(
-      this.props.zoneWidth,
-      this.props.zoneHeight,
-      this.props.screenDimensions.width,
-      this.props.screenDimensions.height,
+      props.zoneWidth,
+      props.zoneHeight,
+      props.screenDimensions.width,
+      props.screenDimensions.height,
     );
 
     switch (mediaType) {
@@ -66,10 +66,10 @@ export default class MediaZoneComponent extends React.Component<MediaZoneProps> 
         return (
           <Image
             assetName={mediaState.name}
-            zoneWidth={this.props.zoneWidth}
-            zoneHeight={this.props.zoneHeight}
-            screenDimensions={this.props.screenDimensions}
-            imageMode={this.props.imageMode}
+            zoneWidth={props.zoneWidth}
+            zoneHeight={props.zoneHeight}
+            screenDimensions={props.screenDimensions}
+            imageMode={props.imageMode}
           />
         );
       }
@@ -87,9 +87,9 @@ export default class MediaZoneComponent extends React.Component<MediaZoneProps> 
     }
 
     return null;
-  }
+  };
 
-  getEvents(bsdm: DmState, mediaStateId: string): DmEvent[] {
+  const getEvents = (bsdm: DmState, mediaStateId: string): DmEvent[] => {
 
     let events: DmEvent[] = [];
 
@@ -100,31 +100,28 @@ export default class MediaZoneComponent extends React.Component<MediaZoneProps> 
     });
 
     return events;
-  }
+  };
 
-  render() {
-
-    if (!isString(this.props.mediaStateId) || this.props.mediaStateId.length === 0) {
-      return null;
-    }
-
-    const mediaState: DmMediaState =
-      dmGetMediaStateById(this.props.bsdm, { id: this.props.mediaStateId }) as DmMediaState;
-    const contentItem: DmDerivedContentItem = mediaState.contentItem;
-
-    switch (contentItem.type) {
-      case ContentItemType.Image:
-      case ContentItemType.Video: {
-        return this.renderMediaItem(mediaState, contentItem as DmMediaContentItem);
-      }
-      default: {
-        break;
-      }
-    }
-
+  if (!isString(props.mediaStateId) || props.mediaStateId.length === 0) {
     return null;
   }
-}
+
+  const mediaState: DmMediaState =
+    dmGetMediaStateById(props.bsdm, { id: props.mediaStateId }) as DmMediaState;
+  const contentItem: DmDerivedContentItem = mediaState.contentItem;
+
+  switch (contentItem.type) {
+    case ContentItemType.Image:
+    case ContentItemType.Video: {
+      return renderMediaItem(mediaState, contentItem as DmMediaContentItem);
+    }
+    default: {
+      break;
+    }
+  }
+
+  return null;
+};
 
 // -----------------------------------------------------------------------
 // Container
@@ -153,7 +150,7 @@ const mapStateToProps = (
     case ZoneType.VideoOrImages: {
       imageMode = (zoneProperties as DmImageZoneProperties).imageMode;
       viewMode = (zoneProperties as DmVideoZoneProperties).viewMode;
-      break;      
+      break;
     }
     default: {
       break;
@@ -168,4 +165,4 @@ const mapStateToProps = (
   };
 };
 
-export const MediaZone = connect(mapStateToProps)(MediaZoneComponent);
+export default connect(mapStateToProps)(MediaZoneComponent);
