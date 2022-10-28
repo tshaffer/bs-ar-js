@@ -76,6 +76,8 @@ export class ImageComponent extends React.Component<ImageProps> {
       );
 
       const { sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight } = canvasRenderProperties;
+
+      this.ctx.clearRect(0, 0, this.props.zoneWidth, this.props.zoneHeight);
       this.ctx.drawImage(imageBitmap, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
       return;
 
