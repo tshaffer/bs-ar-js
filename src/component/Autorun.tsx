@@ -12,7 +12,7 @@ import {
   autorunStateFromState,
 } from '../type';
 import { getHsmMap } from '../selector';
-import { Sign } from './sign';
+import Sign from './sign';
 import {
   AutorunVoidThunkAction,
 } from '../model';

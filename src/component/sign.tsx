@@ -8,7 +8,7 @@ import {
   dmGetZoneById,
   dmGetZonesForSign,
 } from '@brightsign/bsdatamodel';
-import { MediaZone } from './mediaZone';
+import MediaZone from './mediaZone';
 import { autorunStateFromState, Dimensions } from '../type';
 import { calculateAspectRatioFit } from '../utility';
 import { getScreenDimensions } from '../selector';
@@ -26,19 +26,15 @@ export interface SignProps {
 // Component
 // -----------------------------------------------------------------------
 
-class SignComponent extends React.Component<SignProps> {
+const SignComponent = (props: any) => {
 
-  // constructor(props: SignProps) {
-  //   super(props);
-  // }
-
-  renderMediaZone(zone: DmcZone): object {
+  const renderMediaZone = (zone: DmcZone): object => {
 
     const scaledDimensions = calculateAspectRatioFit(
       zone.absolutePosition.width,
       zone.absolutePosition.height,
-      this.props.screenDimensions.width,
-      this.props.screenDimensions.height,
+      props.screenDimensions.width,
+      props.screenDimensions.height,
     );
 
     return (
@@ -54,23 +50,23 @@ class SignComponent extends React.Component<SignProps> {
       >
         <MediaZone
           key={zone.id}
-          bsdm={this.props.bsdm}
+          bsdm={props.bsdm}
           zone={zone}
           zoneWidth={Number(zone.absolutePosition.width)}
           zoneHeight={Number(zone.absolutePosition.height)}
-          screenDimensions={this.props.screenDimensions}
+          screenDimensions={props.screenDimensions}
         />
       </div>
     );
-  }
+  };
 
-  renderZone(zoneId: string): object | null {
+  const renderZone = (zoneId: string): object | null => {
 
-    const zone: DmcZone = dmGetZoneById(this.props.bsdm, { id: zoneId }) as DmcZone;
+    const zone: DmcZone = dmGetZoneById(props.bsdm, { id: zoneId }) as DmcZone;
 
     switch (zone.type) {
       case 'VideoOrImages': {
-        return this.renderMediaZone(zone);
+        return renderMediaZone(zone);
       }
       default: {
         debugger;
@@ -78,21 +74,19 @@ class SignComponent extends React.Component<SignProps> {
     }
 
     return null;
-  }
+  };
 
-  render() {
+  const zoneIds: string[] = dmGetZonesForSign(props.bsdm);
+  const renderedZones: any[] = zoneIds.map((zoneId) =>
+    renderZone(zoneId),
+  );
+  return (
+    <div>
+      {renderedZones}
+    </div>
+  );
+};
 
-    const zoneIds: string[] = dmGetZonesForSign(this.props.bsdm);
-    const renderedZones: any[] = zoneIds.map((zoneId) =>
-      this.renderZone(zoneId),
-    );
-    return (
-      <div>
-        {renderedZones}
-      </div>
-    );
-  }
-}
 
 // -----------------------------------------------------------------------
 // Container
@@ -106,4 +100,4 @@ const mapStateToProps = (state: any): Partial<SignProps> => {
   };
 };
 
-export const Sign = connect(mapStateToProps)(SignComponent);
+export default connect(mapStateToProps)(SignComponent);

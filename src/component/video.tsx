@@ -30,38 +30,32 @@ export interface VideoProps extends VideoPropsFromParent {
 // Component
 // -----------------------------------------------------------------------
 
-// TEDTODO - VideoProps didn't work, so put in any
-export class VideoComponent extends React.Component<any> {
+const VideoComponent = (props: any) => {
 
-  videoElementRef: HTMLVideoElement | null;
+  let videoElementRef: HTMLVideoElement | null;
 
-  handleSetVideoElementRef(videoElementRef: HTMLVideoElement | null) {
-    this.videoElementRef = videoElementRef;
-    this.props.onSetVideoElementRef(videoElementRef);
-  }
+  const handleSetVideoElementRef = (newVideoElementRef: HTMLVideoElement | null) => {
+    videoElementRef = newVideoElementRef;
+    props.onSetVideoElementRef(videoElementRef);
+  };
 
-  render() {
+  const src: string = isomorphicPath.join('file://', props.filePath);
 
-    const src: string = isomorphicPath.join('file://', this.props.filePath);
-
-    const self = this;
-
-    return (
-      <video
-        src={src}
-        width={this.props.zoneWidth.toString()}
-        height={this.props.zoneHeight.toString()}
-        autoPlay={true}
-        ref={(videoElementRef) => {
-          self.handleSetVideoElementRef(videoElementRef);
-        }}
-        onEnded={() => {
-          self.props.onVideoEnd();
-        }}
-      />
-    );
-  }
-}
+  return (
+    <video
+      src={src}
+      width={props.zoneWidth.toString()}
+      height={props.zoneHeight.toString()}
+      autoPlay={true}
+      ref={(videoElementRef) => {
+        handleSetVideoElementRef(videoElementRef);
+      }}
+      onEnded={() => {
+        props.onVideoEnd();
+      }}
+    />
+  );
+};
 
 // -----------------------------------------------------------------------
 // Container
@@ -81,4 +75,4 @@ const mapDispatchToProps = (dispatch: Dispatch<any>): any => {
   }, dispatch);
 };
 
-export const Video = connect(mapStateToProps, mapDispatchToProps)(VideoComponent);
+export default connect(mapStateToProps, mapDispatchToProps)(VideoComponent);

@@ -1,6 +1,6 @@
 /* eslint-disable no-case-declarations */
 import * as React from 'react';
-import _, { isNil } from 'lodash';
+import { isNil } from 'lodash';
 import isomorphicPath from 'isomorphic-path';
 
 import { connect } from 'react-redux';
