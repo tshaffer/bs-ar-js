@@ -20,10 +20,11 @@ import {
 } from '@brightsign/bsdatamodel';
 
 import { autorunStateFromState, Dimensions } from '../type';
-import { getActiveMediaStateId } from '../selector';
+import { getActiveMediaStateId, getActiveMrssDisplayIndex } from '../selector';
 import Image from './image';
 import Video from './video';
 import { calculateAspectRatioFit } from '../utility';
+import { Mrss } from './mrssItem';
 
 // -----------------------------------------------------------------------
 // Types
@@ -41,6 +42,7 @@ export interface MediaZoneProps extends MediaZonePropsFromParent {
   mediaStateId: string;
   imageMode: ImageModeType;
   viewMode: ViewModeType;
+  mrssDisplayIndex: number;
 }
 
 // -----------------------------------------------------------------------
@@ -89,6 +91,28 @@ const MediaZoneComponent = (props: any) => {
     return null;
   };
 
+  const renderMrssDisplayItem = (mediaState: DmMediaState,
+    contentItem: DmDerivedContentItem,
+    mrssDisplayIndex: number) => {
+
+    const scaledDimensions = calculateAspectRatioFit(
+      props.zoneWidth,
+      props.zoneHeight,
+      props.screenDimensions.width,
+      props.screenDimensions.height,
+    );
+
+    return (
+      <Mrss
+        mediaStateId={mediaState.id}
+        assetName={mediaState.name}
+        zoneWidth={scaledDimensions.width}
+        zoneHeight={scaledDimensions.height}
+        screenDimensions={props.screenDimensions}
+      />
+    );
+  }
+
   const getEvents = (bsdm: DmState, mediaStateId: string): DmEvent[] => {
 
     let events: DmEvent[] = [];
@@ -114,6 +138,12 @@ const MediaZoneComponent = (props: any) => {
     case ContentItemType.Image:
     case ContentItemType.Video: {
       return renderMediaItem(mediaState, contentItem as DmMediaContentItem);
+    }
+    case ContentItemType.MrssFeed: {
+      return renderMrssDisplayItem(mediaState,
+        contentItem as DmMediaContentItem,
+        props.mrssDisplayIndex,
+      );
     }
     default: {
       break;
@@ -162,6 +192,7 @@ const mapStateToProps = (
     imageMode,
     viewMode,
     mediaStateId: getActiveMediaStateId(state, ownProps.zone.id),
+    mrssDisplayIndex: getActiveMrssDisplayIndex(state, ownProps.zone.id),
   };
 };
 
