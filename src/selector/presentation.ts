@@ -1,6 +1,7 @@
 import { isNil, isString } from 'lodash';
 import * as fs from 'fs-extra';
 import isomorphicPath from 'isomorphic-path';
+import AssetPool from '@brightsign/assetpool';
 
 import {
   AutorunState,
@@ -193,7 +194,6 @@ export function feedPoolFileExists(state: any, hashValue: string): string {
   const hashValueLength = hashValue.length;
   const dir1 = hashValue.substring(hashValueLength - 2, hashValueLength - 1);
   const dir2 = hashValue.substring(hashValueLength - 1, hashValueLength);
-  // TEDTODO
   const feedFileName = 'nohash-' + hashValue;
   const feedPoolPath: string = isomorphicPath.join(feedPoolDirectory, dir1, dir2, feedFileName);
   if (feedPoolPath !== '' && fs.existsSync(feedPoolPath)) {
@@ -205,4 +205,9 @@ export function feedPoolFileExists(state: any, hashValue: string): string {
 export function getFeedCacheRoot(state: any): string {
   const rootDirectory = getSrcDirectory(state);
   return isomorphicPath.join(rootDirectory, 'feed_cache');
+}
+
+export function getFeedAssetPool(state: any): AssetPool {
+  const feedPoolDirectory = getFeedPoolDirectory(state);
+  return new AssetPool(feedPoolDirectory);
 }

@@ -173,48 +173,6 @@ const getMatchedEvent = (mediaState: DmMediaState, dispatchedEvent: HsmEventType
           if (isNil(mediaStateEventData)) {
             return null;
           }
-          // if (isNil(dispatchedEvent.data) || !isString(dispatchedEvent.data)) {
-          //   return null;
-          // }
-          console.log('BP Event received');
-          console.log('dispatchedEvent.data');
-          console.log(dispatchedEvent.data);
-          console.log('bpEventData');
-          console.log((mediaStateEventData as DmBpEventData).bpType);
-          console.log((mediaStateEventData as DmBpEventData).bpIndex);
-          console.log((mediaStateEventData as DmBpEventData).buttonNumber);
-          console.log((mediaStateEventData as DmBpEventData).pressContinuous);
-
-          /*
-oncontroldown invoked: 0
-BP Event received
-dispatchedEvent.data
-0
-
-bpEventData
-bp900
-a
-0
-null
-
-BP Event received
-dispatchedEvent.data
-0
-
-bpEventData
-bp900
-a
-1
-null
-          */
-          console.log('(mediaStateEventData as DmBpEventData).buttonNumber.toString().length');
-          console.log((mediaStateEventData as DmBpEventData).buttonNumber.toString().length);
-          console.log('isString(dispatchedEvent.data)');
-          console.log(isString(dispatchedEvent.data));
-          if (isString(dispatchedEvent.data)) {
-            console.log('dispatchedEvent.data.length');
-            console.log(dispatchedEvent.data.length);
-          }
           if ((mediaStateEventData as DmBpEventData).buttonNumber === dispatchedEvent.data) {
             return mediaStateEvent;
           }
@@ -316,23 +274,6 @@ const timeoutEventHandler = (callbackParams: TimeoutEventCallbackParams): void =
 
 export const keydownEventHandler = (keyName: string): any => {
   return (dispatch: AutorunDispatch, getState: () => any) => {
-
-    // TEDTODO - get the current state - not sure what the actual right way to do this is.
-    // const autorunState = autorunStateFromState(getState());
-    // const hsmMap: HsmMap = getHsmMap(autorunState);
-    // for (const hsmId in hsmMap) {
-    //   if (Object.prototype.hasOwnProperty.call(hsmMap, hsmId)) {
-    //     const hsm: Hsm = hsmMap[hsmId];
-    //     // TEDTODO - total hack!!
-    //     if (hsm.type === HsmType.VideoOrImages) {
-    //       const activeHState: HState | null = getActiveHStateIdByHsmId(autorunState, hsm.id);
-    //       if (!isNil(activeHState)) {
-    //         console.log('activeHState: ', activeHState);
-    //       }
-    //     }
-    //   }
-    // }
-    // TEDTODO - doesn't look like the current state is used / needed???? It's retrieved elsewhere.
 
     const event: HsmEventType = {
       EventType: EventType.Keyboard,

@@ -47,6 +47,8 @@ if (target !== 'brightsign') {
 } else {
   externals = {
     /* BSControlPort: 'BSControlPort', */
+    '@brightsign/assetpool': 'commonjs @brightsign/assetpool',
+    '@brightsign/assetpoolfetcher': 'commonjs @brightsign/assetpoolfetcher',
     '@brightsign/bscontrolport': 'BSControlPort',
     BSDeviceInfo: 'BSDeviceInfo',
     '@brightsign/registry': 'commonjs @brightsign/registry',
